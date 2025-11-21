@@ -1,0 +1,380 @@
+/* ========================================
+   STAGE PAGE STYLES
+   ======================================== */
+
+/* Main Container */
+.Main {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    padding: 20px 0;
+}
+
+/* Stage Form Container */
+.stage-form {
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1200px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 
+                0 8px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dropped-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  font-weight: bold;
+  text-shadow: 3px 3px 5px black;
+}
+
+.dropped-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    font-weight: bold;
+    color: white;
+    z-index: 9999;
+    text-align: center;
+}
+
+.next-assy-btn:hover {
+    opacity: 0.9;
+}
+
+
+/* Stage Table */
+.stage-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 16px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* Table Header */
+.stage-table thead {
+    background: linear-gradient(135deg, #013b6f 0%, #025a9c 100%);
+    color: #ffffff;
+}
+
+.stage-table thead tr th {
+    padding: 18px 20px;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: none;
+}
+
+/* Table Body */
+.stage-table tbody tr {
+    transition: all 0.2s ease;
+    background: #ffffff;
+}
+
+.stage-table tbody tr:nth-child(even) {
+    background: #f8f9fb;
+}
+
+.stage-table tbody tr:hover {
+    background: #e8f4fd;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(1, 59, 111, 0.1);
+}
+
+.stage-table td {
+    padding: 16px 20px;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    color: #374151;
+    vertical-align: middle;
+}
+
+/* Serial Number Column */
+.stage-table td:first-child {
+    text-align: center;
+    font-weight: 600;
+    color: #013b6f;
+    font-size: 17px;
+}
+
+/* Description Column (Tamil text) */
+.stage-table td:nth-child(2) {
+    font-weight: 500;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+/* Action Column */
+.stage-table td:last-child {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Button Base Styles */
+.yes-btn,
+.no-btn {
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 80px;
+    opacity: 0.5;
+    position: relative;
+}
+
+.yes-btn:active,
+.no-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* YES Button - Unselected State */
+.yes-btn {
+    background: #e5e7eb;
+    color: #16a34a;
+    border-color: #d1d5db;
+}
+
+.yes-btn:hover {
+    opacity: 0.7;
+    border-color: #16a34a;
+}
+
+/* YES Button - Selected State */
+.yes-btn.selected {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff;
+    opacity: 1;
+    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3);
+    border-color: #16a34a;
+}
+
+.yes-btn.selected:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    transform: translateY(-1px);
+    opacity: 1;
+}
+
+.yes-btn.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+/* NO Button - Unselected State */
+.no-btn {
+    background: #e5e7eb;
+    color: #dc2626;
+    border-color: #d1d5db;
+}
+
+.no-btn:hover {
+    opacity: 0.7;
+    border-color: #dc2626;
+}
+
+/* NO Button - Selected State */
+.no-btn.selected {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    opacity: 1;
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+    border-color: #dc2626;
+}
+
+.no-btn.selected:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-1px);
+    opacity: 1;
+}
+
+.no-btn.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+/* Audio Recorded Indicator */
+.stage-table td:last-child span {
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Empty State */
+.stage-table tbody tr td[colspan] {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+    font-size: 16px;
+    font-style: italic;
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(15px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+.submit-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.submit-btn {
+    background: #013b6f;
+    color: white;
+    font-size: 20px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    background: #012b52;
+}
+
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablet */
+@media (max-width: 992px) {
+    .stage-form {
+        padding: 25px;
+        width: 96%;
+    }
+    
+    .stage-table {
+        font-size: 15px;
+    }
+    
+    .stage-table thead tr th {
+        padding: 15px;
+        font-size: 16px;
+    }
+    
+    .stage-table td {
+        padding: 14px 16px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .stage-form {
+        padding: 20px 15px;
+        width: 98%;
+        margin: 20px auto;
+        border-radius: 8px;
+    }
+    
+    .stage-table {
+        font-size: 14px;
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .stage-table thead tr th {
+        padding: 12px 10px;
+        font-size: 14px;
+        letter-spacing: 0.3px;
+    }
+    
+    .stage-table td {
+        padding: 12px 10px;
+    }
+    
+    .stage-table td:last-child {
+        gap: 8px;
+    }
+    
+    .yes-btn,
+    .no-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        min-width: 70px;
+    }
+    
+    .stage-table td:last-child span {
+        font-size: 12px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .stage-form {
+        padding: 15px 10px;
+        margin: 15px auto;
+    }
+    
+    .stage-table thead tr th {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    
+    .stage-table td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    
+    .yes-btn,
+    .no-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        min-width: 60px;
+    }
+    
+    .stage-table td:first-child {
+        font-size: 14px;
+    }
+}

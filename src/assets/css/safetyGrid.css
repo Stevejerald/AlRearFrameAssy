@@ -1,0 +1,189 @@
+/* safetygrid.css - Matching Ashok Leyland Document Design */
+
+.safety-grid-main {
+  display: flex;
+  align-items: stretch;
+  border: 3px solid #000000;
+  background: #ffffff;
+  width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.safety-left {
+  border-right: 3px solid #000000;
+  padding: 15px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  background: #ffffff;
+}
+
+.safety-left h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+  writing-mode: horizontal-tb;
+  line-height: 1.5;
+  color: #000000;
+  letter-spacing: 0.3px;
+}
+
+.safety-right {
+  flex: 1;
+  padding: 0;
+  background: #ffffff;
+}
+
+.safety-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.safety-table thead tr {
+  border-bottom: 3px solid #000000;
+  background: #ffffff;
+}
+
+.safety-table th {
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  border-right: 3px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  letter-spacing: 0.3px;
+}
+
+.safety-table th:last-child {
+  border-right: none;
+}
+
+.safety-table tbody td {
+  padding: 15px 12px;
+  text-align: center;
+  vertical-align: middle;
+  border-right: 3px solid #000000;
+  background: #ffffff;
+  transition: none;
+}
+
+.safety-table tbody td:hover {
+  background: #ffffff;
+}
+
+.safety-table tbody td:last-child {
+  border-right: none;
+}
+
+.safety-table img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  filter: contrast(1) brightness(1);
+  transition: none;
+}
+
+.safety-table tbody td:hover img {
+  transform: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .safety-grid-main {
+    flex-direction: column;
+    border-width: 2px;
+  }
+  
+  .safety-left {
+    border-right: none;
+    border-bottom: 2px solid #000000;
+    min-width: auto;
+    padding: 10px 12px;
+  }
+  
+  .safety-table img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .safety-table th,
+  .safety-table td {
+    font-size: 12px;
+    padding: 10px 8px;
+    border-width: 2px;
+  }
+
+  .safety-left h3 {
+    font-size: 13px;
+  }
+
+  .safety-table thead tr {
+    border-width: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .safety-table img {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .safety-left h3 {
+    font-size: 12px;
+  }
+
+  .safety-table th,
+  .safety-table td {
+    font-size: 11px;
+    padding: 8px 6px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .safety-grid-main {
+    page-break-inside: avoid;
+    border: 3px solid #000000 !important;
+    box-shadow: none;
+  }
+  
+  .safety-table th,
+  .safety-table td {
+    border-color: #000000 !important;
+  }
+  
+  .safety-left {
+    border-right: 3px solid #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .safety-table thead tr {
+    background: #ffffff !important;
+    border-color: #000000 !important;
+  }
+
+  .safety-table tbody td {
+    background: #ffffff !important;
+  }
+
+  .safety-table tbody td:hover {
+    background: #ffffff !important;
+  }
+
+  .safety-table img {
+    filter: contrast(1);
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
