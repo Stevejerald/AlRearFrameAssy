@@ -1,33 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Nov 21, 2025 at 02:40 AM
--- Server version: 9.1.0
--- PHP Version: 8.3.14
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `self_certification`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `conveyorsequence`
---
-
-DROP TABLE IF EXISTS `conveyorsequence`;
 CREATE TABLE IF NOT EXISTS `conveyorsequence` (
   `id` int NOT NULL AUTO_INCREMENT,
   `master_id` int NOT NULL,
@@ -37,11 +7,7 @@ CREATE TABLE IF NOT EXISTS `conveyorsequence` (
   `dropped` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `master_id` (`master_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `conveyorsequence`
---
+)
 
 INSERT INTO `conveyorsequence` (`id`, `master_id`, `stage_id`, `processed`, `created_at`, `dropped`) VALUES
 (1, 7, '1L', 1, '2025-11-20 18:01:02', 0),
@@ -52,82 +18,7 @@ INSERT INTO `conveyorsequence` (`id`, `master_id`, `stage_id`, `processed`, `cre
 (6, 7, '2INSP', 0, '2025-11-20 18:01:02', 0),
 (7, 7, '3L', 1, '2025-11-20 18:01:02', 0),
 (8, 7, '3R', 0, '2025-11-20 18:01:02', 0),
-(9, 7, '3INSP', 0, '2025-11-20 18:01:02', 0),
-(10, 7, '4L', 1, '2025-11-20 18:01:02', 0),
-(11, 7, '4R', 0, '2025-11-20 18:01:02', 0),
-(12, 7, '4INSP', 0, '2025-11-20 18:01:02', 0),
-(13, 7, '5L', 1, '2025-11-20 18:01:02', 1),
-(14, 7, '5R', 0, '2025-11-20 18:01:02', 0),
-(15, 7, '5INSP', 0, '2025-11-20 18:01:02', 0),
-(16, 7, '6L', 1, '2025-11-20 18:01:02', 0),
-(17, 7, '6R', 0, '2025-11-20 18:01:02', 0),
-(18, 7, '6INSP', 0, '2025-11-20 18:01:02', 0),
-(19, 7, '7L', 0, '2025-11-20 18:01:02', 0),
-(20, 7, '7R', 0, '2025-11-20 18:01:02', 0),
-(21, 7, '7INSP', 0, '2025-11-20 18:01:02', 0),
-(22, 7, '8L', 0, '2025-11-20 18:01:02', 0),
-(23, 7, '8R', 0, '2025-11-20 18:01:02', 0),
-(24, 7, '8INSP', 0, '2025-11-20 18:01:02', 0),
-(25, 7, '9L', 0, '2025-11-20 18:01:02', 0),
-(26, 7, '9R', 0, '2025-11-20 18:01:02', 0),
-(27, 7, '9INSP', 0, '2025-11-20 18:01:02', 0),
-(28, 7, '10L', 0, '2025-11-20 18:01:02', 0),
-(29, 7, '10R', 0, '2025-11-20 18:01:02', 0),
-(30, 7, '10INSP', 0, '2025-11-20 18:01:02', 0),
-(31, 7, '11L', 0, '2025-11-20 18:01:02', 0),
-(32, 7, '11R', 0, '2025-11-20 18:01:02', 0),
-(33, 7, '11INSP', 0, '2025-11-20 18:01:02', 0),
-(34, 7, '12L', 0, '2025-11-20 18:01:02', 0),
-(35, 7, '12R', 0, '2025-11-20 18:01:02', 0),
-(36, 7, '12INSP', 0, '2025-11-20 18:01:02', 0),
-(37, 7, '13L', 0, '2025-11-20 18:01:02', 0),
-(38, 7, '13R', 0, '2025-11-20 18:01:02', 0),
-(39, 7, '13INSP', 0, '2025-11-20 18:01:02', 0),
-(40, 8, '1L', 1, '2025-11-20 18:04:24', 0),
-(41, 8, '1R', 0, '2025-11-20 18:04:24', 0),
-(42, 8, '1INSP', 1, '2025-11-20 18:04:24', 0),
-(43, 8, '2L', 0, '2025-11-20 18:04:24', 0),
-(44, 8, '2R', 0, '2025-11-20 18:04:24', 0),
-(45, 8, '2INSP', 0, '2025-11-20 18:04:24', 0),
-(46, 8, '3L', 0, '2025-11-20 18:04:24', 0),
-(47, 8, '3R', 0, '2025-11-20 18:04:24', 0),
-(48, 8, '3INSP', 0, '2025-11-20 18:04:24', 0),
-(49, 8, '4L', 0, '2025-11-20 18:04:24', 0),
-(50, 8, '4R', 0, '2025-11-20 18:04:24', 0),
-(51, 8, '4INSP', 0, '2025-11-20 18:04:24', 0),
-(52, 8, '5L', 0, '2025-11-20 18:04:24', 0),
-(53, 8, '5R', 0, '2025-11-20 18:04:24', 0),
-(54, 8, '5INSP', 0, '2025-11-20 18:04:24', 0),
-(55, 8, '6L', 1, '2025-11-20 18:04:24', 0),
-(56, 8, '6R', 0, '2025-11-20 18:04:24', 0),
-(57, 8, '6INSP', 0, '2025-11-20 18:04:24', 0),
-(58, 8, '7L', 0, '2025-11-20 18:04:24', 0),
-(59, 8, '7R', 0, '2025-11-20 18:04:24', 0),
-(60, 8, '7INSP', 0, '2025-11-20 18:04:24', 0),
-(61, 8, '8L', 0, '2025-11-20 18:04:24', 0),
-(62, 8, '8R', 0, '2025-11-20 18:04:24', 0),
-(63, 8, '8INSP', 0, '2025-11-20 18:04:24', 0),
-(64, 8, '9L', 0, '2025-11-20 18:04:24', 0),
-(65, 8, '9R', 0, '2025-11-20 18:04:24', 0),
-(66, 8, '9INSP', 0, '2025-11-20 18:04:24', 0),
-(67, 8, '10L', 0, '2025-11-20 18:04:24', 0),
-(68, 8, '10R', 0, '2025-11-20 18:04:24', 0),
-(69, 8, '10INSP', 0, '2025-11-20 18:04:24', 0),
-(70, 8, '11L', 0, '2025-11-20 18:04:24', 0),
-(71, 8, '11R', 0, '2025-11-20 18:04:24', 0),
-(72, 8, '11INSP', 0, '2025-11-20 18:04:24', 0),
-(73, 8, '12L', 0, '2025-11-20 18:04:24', 0),
-(74, 8, '12R', 0, '2025-11-20 18:04:24', 0),
-(75, 8, '12INSP', 0, '2025-11-20 18:04:24', 0),
-(76, 8, '13L', 0, '2025-11-20 18:04:24', 0),
-(77, 8, '13R', 0, '2025-11-20 18:04:24', 0),
-(78, 8, '13INSP', 0, '2025-11-20 18:04:24', 0);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `device_master`
---
+(9, 7, '3INSP', 0, '2025-11-20 18:01:02', 0);
 
 DROP TABLE IF EXISTS `device_master`;
 CREATE TABLE IF NOT EXISTS `device_master` (
@@ -139,20 +30,11 @@ CREATE TABLE IF NOT EXISTS `device_master` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `device_master`
---
-
 INSERT INTO `device_master` (`id`, `emp_id`, `device_mac`, `stage`, `created_at`) VALUES
 (1, 'EMP001', 'A4:C3:33:22:E1', '1L', '2025-11-20 14:14:13'),
 (2, 'EMP002', 'A4:C3:33:22:E2', '1R', '2025-11-20 14:14:13'),
 (3, 'EMP003', 'A4:C3:33:22:E3', '3', '2025-11-20 14:14:13');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `rearframeassymaster`
---
 
 DROP TABLE IF EXISTS `rearframeassymaster`;
 CREATE TABLE IF NOT EXISTS `rearframeassymaster` (
@@ -173,19 +55,10 @@ CREATE TABLE IF NOT EXISTS `rearframeassymaster` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `rearframeassymaster`
---
 
 INSERT INTO `rearframeassymaster` (`id`, `stage_id`, `date_shift`, `axle_serial_no`, `axle_spec`, `axle_casing_part_no`, `brake_part_no_lh`, `brake_part_no_rh`, `cwp_diff_carrier_no`, `axle_qr`, `brake_qr`, `hub_qr`, `abs_qr`, `created_at`) VALUES
 (8, '1L', 'B', 'H', 'A', 'I', 'I', 'K', 'T', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', '2025-11-20 18:04:24'),
 (7, '1L', 'H', 'E', 'L', 'L', 'O', 'O', 'O', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', 'https://scan.page/21FqRj', '2025-11-20 18:01:02');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rearframeassystagetasks`
---
 
 DROP TABLE IF EXISTS `rearframeassystagetasks`;
 CREATE TABLE IF NOT EXISTS `rearframeassystagetasks` (
@@ -200,9 +73,6 @@ CREATE TABLE IF NOT EXISTS `rearframeassystagetasks` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `rearframeassystagetasks`
---
 
 INSERT INTO `rearframeassystagetasks` (`id`, `master_id`, `stage_id`, `task_no`, `description`, `status`, `audio`, `created_at`) VALUES
 (14, 7, '1L', 4, 'LH & RH பூடர் / ப்ளம்பர் பிராக்கெட் பொழுத்துதல் (Boss / Cargo / Stag)', 'yes', NULL, '2025-11-20 18:01:02'),
@@ -232,7 +102,3 @@ INSERT INTO `rearframeassystagetasks` (`id`, `master_id`, `stage_id`, `task_no`,
 INSERT INTO `rearframeassystagetasks` (`id`, `master_id`, `stage_id`, `task_no`, `description`, `status`, `audio`, `created_at`) VALUES
 (12, 7, '1L', 2, 'கட்டு கம்பியை அகற்றி, ஆக்ஸில் ஷாஃப்ட்களை அகற்றி அவற்றை சருக்களில் வைக்கவேண்டும்', 'yes', NULL, '2025-11-20 18:01:02');
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

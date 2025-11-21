@@ -15,79 +15,97 @@ if (!$date) {
     exit;
 }
 
-$sql = "SELECT *
-        FROM RearFrameAssyMaster
-        WHERE DATE(created_at) = ?
-        ORDER BY id DESC";
+// FORMAT: "YYYY-MM-DD"
+$sql = "
+    SELECT 
+        m.id AS master_id,
+        m.axle_serial_no,
+        DATE(m.created_at) AS created_date
+    FROM RearFrameAssyMaster m
+    WHERE DATE(m.created_at) = ?
+    ORDER BY m.id ASC
+";
 
 $stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    echo json_encode(["status" => false, "message" => "Prepare failed: " . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("s", $date);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$records = [];
+$rows = [];
 
-while ($m = $result->fetch_assoc()) {
+while ($row = $result->fetch_assoc()) {
 
-    $master_id = $m['id'];
+    $master_id = $row['master_id'];
 
-    /* -------------------- CHECK DROPPED -------------------- */
-    $sqlDrop = "SELECT stage_id
-                FROM ConveyorSequence
-                WHERE master_id = ? AND processed = 2
-                LIMIT 1";
+    // ------------------------------------------------
+    // FIND IF ANY STAGE IS DROPPED
+    // ------------------------------------------------
+    $sql2 = "
+        SELECT dropped, stage_id
+        FROM ConveyorSequence
+        WHERE master_id = ?
+    ";
 
-    $stmtDrop = $conn->prepare($sqlDrop);
-    $stmtDrop->bind_param("i", $master_id);
-    $stmtDrop->execute();
-    $dropRes = $stmtDrop->get_result();
+    $stmt2 = $conn->prepare($sql2);
+    $stmt2->bind_param("i", $master_id);
+    $stmt2->execute();
+    $res2 = $stmt2->get_result();
 
-    $failedStage = null;
-    if ($row = $dropRes->fetch_assoc()) {
-        $failedStage = $row['stage_id'];   // e.g., 1R, 2INSP
+    $status = "OK";
+    $notOkStage = null;
+
+    while ($r = $res2->fetch_assoc()) {
+        if ($r['dropped'] == 1) {
+            $status = "NOT OK (" . $r['stage_id'] . ")";
+            $notOkStage = $r['stage_id'];
+        }
     }
 
-    $statusText = $failedStage 
-                    ? "NOT OK (" . $failedStage . ")" 
-                    : "OK";
+    // ----------------------------------------------------
+    // CHECK IF ANY AUDIO EXISTS (IMPROVED DETECTION)
+    // ----------------------------------------------------
+    $sql3 = "
+        SELECT audio
+        FROM RearFrameAssyStageTasks
+        WHERE master_id = ?
+          AND audio IS NOT NULL
+          AND LENGTH(audio) > 20
+        LIMIT 1
+    ";
 
-    /* -------------------- REWORK STATUS -------------------- */
-    $sqlRework = "SELECT id FROM ReworkTable WHERE master_id = ? LIMIT 1";
-    $stmtRw = $conn->prepare($sqlRework);
-    $stmtRw->bind_param("i", $master_id);
-    $stmtRw->execute();
-    $rwRes = $stmtRw->get_result();
+    $stmt3 = $conn->prepare($sql3);
+    $stmt3->bind_param("i", $master_id);
+    $stmt3->execute();
+    $res3 = $stmt3->get_result();
 
-    $reworkStatus = $rwRes->num_rows > 0 ? "REWORKED" : "CLEAR";
+    $audioAvailable = $res3->num_rows > 0 ? true : false;
 
-    /* -------------------- AUDIO -------------------- */
-    $sqlAudio = "SELECT audio FROM RearFrameAssyStageTasks
-                 WHERE master_id = ? AND audio IS NOT NULL AND audio != ''
-                 LIMIT 1";
+    // ----------------------------------------------------
+    // REWORK STATUS
+    // ----------------------------------------------------
+    $reworkStatus = $status === "OK" ? "CLEAR" : "PENDING";
 
-    $stmtA = $conn->prepare($sqlAudio);
-    $stmtA->bind_param("i", $master_id);
-    $stmtA->execute();
-    $audioRes = $stmtA->get_result();
 
-    $audioURL = null;
-    if ($audioRes->num_rows > 0) {
-        $audioName = $audioRes->fetch_assoc()['audio'];
-        $audioURL = "http://localhost/AlRearFrameAssy/uploads/audio/" . $audioName;
-    }
-
-    /* -------------------- BUILD ROW -------------------- */
-    $records[] = [
-        "master_id"      => $master_id,
-        "axle_serial_no" => $m["axle_serial_no"],
-        "date"           => substr($m["created_at"], 0, 10),
-        "status"         => $statusText,
-        "rework_status"  => $reworkStatus,
-        "audio_url"      => $audioURL
+    $rows[] = [
+        "master_id" => $master_id,
+        "axle_serial_no" => $row["axle_serial_no"],
+        "date" => $row["created_date"],
+        "status" => $status,
+        "rework_status" => $reworkStatus,
+        "audio" => $audioAvailable,
     ];
 }
 
-echo json_encode(["status" => true, "records" => $records]);
+echo json_encode([
+    "status" => true,
+    "data" => $rows
+]);
 
 $stmt->close();
 $conn->close();

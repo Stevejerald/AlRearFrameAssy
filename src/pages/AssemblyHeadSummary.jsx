@@ -5,10 +5,11 @@ function AssemblyHeadSummary() {
     const [selectedDate, setSelectedDate] = useState("");
     const [summary, setSummary] = useState([]);
 
+    // store audio per-row
+    const [rowAudio, setRowAudio] = useState({});
+
     useEffect(() => {
-        if (selectedDate !== "") {
-            fetchSummary();
-        }
+        if (selectedDate !== "") fetchSummary();
     }, [selectedDate]);
 
     /* ---------------------------------------------------
@@ -20,10 +21,32 @@ function AssemblyHeadSummary() {
         );
 
         const data = await res.json();
-        if (data.status) {
-            setSummary(data.records);
+
+        if (data.status && Array.isArray(data.data)) {
+            setSummary(data.data);
+            setRowAudio({}); // reset audio players
         } else {
             setSummary([]);
+            setRowAudio({});
+        }
+    };
+
+    /* ---------------------------------------------------
+       FETCH AUDIO FOR A ROW
+    ---------------------------------------------------- */
+    const loadAudio = async (master_id) => {
+        const res = await fetch(
+            `http://localhost/AlRearFrameAssy/backend/api/getAudio.php?master_id=${master_id}`
+        );
+        const data = await res.json();
+
+        if (data.status) {
+            setRowAudio(prev => ({
+                ...prev,
+                [master_id]: data.audio
+            }));
+        } else {
+            alert("No audio found");
         }
     };
 
@@ -45,16 +68,12 @@ function AssemblyHeadSummary() {
         const data = await res.json();
         if (data.status) {
             alert("Marked for Rework!");
-            fetchSummary();
+            fetchSummary(); // refresh table
         }
     };
 
-    /* ---------------------------------------------------
-       UI
-    ---------------------------------------------------- */
     return (
         <div className="ahs-main">
-
             <h1 className="ahs-title">Assembly Summary</h1>
 
             {/* DATE FILTER */}
@@ -67,7 +86,7 @@ function AssemblyHeadSummary() {
                 />
             </div>
 
-            {/* SUMMARY TABLE */}
+            {/* TABLE */}
             <table className="ahs-table">
                 <thead>
                     <tr>
@@ -90,44 +109,49 @@ function AssemblyHeadSummary() {
                         </tr>
                     ) : (
                         summary.map((row, index) => {
-                            const isOK = row.all_stages_ok === 1;
-                            const statusText = isOK ? "OK" : `NOT OK (${row.failed_stage})`;
+
+                            const isOK = row.status.includes("OK");
 
                             return (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{row.axle_serial_no}</td>
-                                    <td>{row.date_shift}</td>
+                                    <td>{row.date}</td>
 
-                                    {/* STATUS */}
                                     <td className={isOK ? "status-ok" : "status-not"}>
-                                        {statusText}
+                                        {row.status}
                                     </td>
 
-                                    {/* REWORK STATUS */}
                                     <td>
-                                        {row.rework === 1 ? (
-                                            <span className="rework-badge">REWORK</span>
-                                        ) : (
+                                        {row.rework_status === "CLEAR" ? (
                                             <span className="ok-badge">CLEAR</span>
+                                        ) : (
+                                            <span className="rework-badge">PENDING</span>
                                         )}
                                     </td>
 
-                                    {/* AUDIO FILE */}
+                                    {/* AUDIO COLUMN */}
                                     <td>
-                                        {row.audio_present === 1 ? (
-                                            <button
-                                                className="audio-btn"
-                                                onClick={() => new Audio(row.audio_url).play()}
-                                            >
-                                                🔊 Play
-                                            </button>
+                                        {row.audio ? (
+                                            rowAudio[row.master_id] ? (
+                                                <audio
+                                                    controls
+                                                    src={rowAudio[row.master_id]}
+                                                    style={{ width: "180px" }}
+                                                ></audio>
+                                            ) : (
+                                                <button
+                                                    className="audio-btn"
+                                                    onClick={() => loadAudio(row.master_id)}
+                                                >
+                                                    🎧 View Audio
+                                                </button>
+                                            )
                                         ) : (
                                             "-"
                                         )}
                                     </td>
 
-                                    {/* SEND TO REWORK */}
                                     <td>
                                         <button
                                             className="rework-btn"
