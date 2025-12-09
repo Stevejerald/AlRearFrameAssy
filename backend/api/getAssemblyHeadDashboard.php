@@ -345,12 +345,265 @@ $stage_failure_analysis = [];
 if ($res_stage_failure) {
     while ($row = $res_stage_failure->fetch_assoc()) {
         $stage_failure_analysis[] = [
-            "stage_id" => intval($row["stage_id"]),
-            "count"    => intval($row["count"])
+            "stage_id" => $row["stage_id"],           // ⬅ KEEP AS STRING
+            "count"    => intval($row["count"])       // numeric count
         ];
     }
 }
 
+/***********************************************************
+ * 1️⃣2️⃣ TEAM PERFORMANCE (TODAY)
+ ***********************************************************/
+
+// ---------------------------------------------------------
+// TOTAL Assemblies Today
+// ---------------------------------------------------------
+$sql_tp_total = "
+    SELECT COUNT(*) AS total
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE()
+";
+
+$res_tp_total = $conn->query($sql_tp_total);
+$tp_total = ($res_tp_total) ? intval($res_tp_total->fetch_assoc()["total"]) : 0;
+
+
+// ---------------------------------------------------------
+// SHIFT 1 Assemblies Today (Shift A)
+// ---------------------------------------------------------
+$sql_tp_shift1 = "
+    SELECT COUNT(*) AS total
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE() AND prod_shift = 'A'
+";
+
+$res_tp_shift1 = $conn->query($sql_tp_shift1);
+$tp_shift1 = ($res_tp_shift1) ? intval($res_tp_shift1->fetch_assoc()["total"]) : 0;
+
+
+// ---------------------------------------------------------
+// SHIFT 2 Assemblies Today (Shift B or C)
+// ---------------------------------------------------------
+$sql_tp_shift2 = "
+    SELECT COUNT(*) AS total
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE()
+      AND (prod_shift = 'B' OR prod_shift = 'C')
+";
+
+$res_tp_shift2 = $conn->query($sql_tp_shift2);
+$tp_shift2 = ($res_tp_shift2) ? intval($res_tp_shift2->fetch_assoc()["total"]) : 0;
+
+$sql_shift_prod = "
+    SELECT 'yesterday_shift_1' AS label, COUNT(*) AS total
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE() - INTERVAL 1 DAY AND prod_shift = 'A'
+    
+    UNION ALL
+    
+    SELECT 'yesterday_shift_2', COUNT(*)
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE() - INTERVAL 1 DAY AND prod_shift IN ('B','C')
+    
+    UNION ALL
+    
+    SELECT 'today_shift_1', COUNT(*)
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE() AND prod_shift = 'A'
+    
+    UNION ALL
+    
+    SELECT 'today_shift_2', COUNT(*)
+    FROM rearframeassymaster
+    WHERE prod_date = CURDATE() AND prod_shift IN ('B','C')
+";
+$res_shift_prod = $conn->query($sql_shift_prod);
+$shift_production = [];
+
+if ($res_shift_prod) {
+    while ($row = $res_shift_prod->fetch_assoc()) {
+        $shift_production[$row["label"]] = intval($row["total"]);
+    }
+}
+
+$sql_shift_ok = "
+(
+SELECT 'yesterday_shift_1_ok' AS label, COUNT(*) AS ok_master_count
+FROM (
+    SELECT r.master_id 
+    FROM rearframeassystagetasks r
+    JOIN rearframeassymaster m ON r.master_id = m.id
+    WHERE DATE(r.created_date) = CURDATE() - INTERVAL 1 DAY
+    GROUP BY r.master_id
+    HAVING 
+        NOT EXISTS (SELECT 1 FROM drop_log d WHERE d.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM not_ok_log n WHERE n.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM rework_log rl WHERE rl.master_id = r.master_id)
+        AND (SELECT MIN(processed) FROM conveyorsequence c WHERE c.master_id = r.master_id) = 1
+) AS t
+JOIN rearframeassymaster m2 ON m2.id = t.master_id
+WHERE m2.prod_shift = 'A'
+)
+
+UNION ALL
+
+(
+SELECT 'yesterday_shift_2_ok', COUNT(*)
+FROM (
+    SELECT r.master_id 
+    FROM rearframeassystagetasks r
+    JOIN rearframeassymaster m ON r.master_id = m.id
+    WHERE DATE(r.created_date) = CURDATE() - INTERVAL 1 DAY
+    GROUP BY r.master_id
+    HAVING 
+        NOT EXISTS (SELECT 1 FROM drop_log d WHERE d.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM not_ok_log n WHERE n.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM rework_log rl WHERE rl.master_id = r.master_id)
+        AND (SELECT MIN(processed) FROM conveyorsequence c WHERE c.master_id = r.master_id) = 1
+) AS t
+JOIN rearframeassymaster m2 ON m2.id = t.master_id
+WHERE m2.prod_shift IN ('B','C')
+)
+
+UNION ALL
+
+(
+SELECT 'today_shift_1_ok', COUNT(*)
+FROM (
+    SELECT r.master_id 
+    FROM rearframeassystagetasks r
+    JOIN rearframeassymaster m ON r.master_id = m.id
+    WHERE DATE(r.created_date) = CURDATE()
+    GROUP BY r.master_id
+    HAVING 
+        NOT EXISTS (SELECT 1 FROM drop_log d WHERE d.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM not_ok_log n WHERE n.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM rework_log rl WHERE rl.master_id = r.master_id)
+        AND (SELECT MIN(processed) FROM conveyorsequence c WHERE c.master_id = r.master_id) = 1
+) AS t
+JOIN rearframeassymaster m2 ON m2.id = t.master_id
+WHERE m2.prod_shift = 'A'
+)
+
+UNION ALL
+
+(
+SELECT 'today_shift_2_ok', COUNT(*)
+FROM (
+    SELECT r.master_id 
+    FROM rearframeassystagetasks r
+    JOIN rearframeassymaster m ON r.master_id = m.id
+    WHERE DATE(r.created_date) = CURDATE()
+    GROUP BY r.master_id
+    HAVING 
+        NOT EXISTS (SELECT 1 FROM drop_log d WHERE d.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM not_ok_log n WHERE n.master_id = r.master_id)
+        AND NOT EXISTS (SELECT 1 FROM rework_log rl WHERE rl.master_id = r.master_id)
+        AND (SELECT MIN(processed) FROM conveyorsequence c WHERE c.master_id = r.master_id) = 1
+) AS t
+JOIN rearframeassymaster m2 ON m2.id = t.master_id
+WHERE m2.prod_shift IN ('B','C')
+)
+";
+
+$res_shift_ok = $conn->query($sql_shift_ok);
+$shift_ok = [];
+
+if ($res_shift_ok) {
+    while ($row = $res_shift_ok->fetch_assoc()) {
+        $shift_ok[$row["label"]] = intval($row["ok_master_count"]);
+    }
+}
+
+
+$sql_shift_not_ok = "
+(
+SELECT 'yesterday_shift_1' AS label,
+       COUNT(DISTINCT n.master_id) AS total
+FROM not_ok_log n
+JOIN rearframeassymaster m ON m.id = n.master_id
+WHERE DATE(n.created_date) = CURDATE() - INTERVAL 1 DAY
+  AND m.prod_shift = 'A'
+)
+
+UNION ALL
+
+(
+SELECT 'yesterday_shift_2', COUNT(DISTINCT n.master_id)
+FROM not_ok_log n
+JOIN rearframeassymaster m ON m.id = n.master_id
+WHERE DATE(n.created_date) = CURDATE() - INTERVAL 1 DAY
+  AND m.prod_shift IN ('B','C')
+)
+
+UNION ALL
+
+(
+SELECT 'today_shift_1', COUNT(DISTINCT n.master_id)
+FROM not_ok_log n
+JOIN rearframeassymaster m ON m.id = n.master_id
+WHERE DATE(n.created_date) = CURDATE()
+  AND m.prod_shift = 'A'
+)
+
+UNION ALL
+
+(
+SELECT 'today_shift_2', COUNT(DISTINCT n.master_id)
+FROM not_ok_log n
+JOIN rearframeassymaster m ON m.id = n.master_id
+WHERE DATE(n.created_date) = CURDATE()
+  AND m.prod_shift IN ('B','C')
+)
+";
+
+
+$res_shift_not_ok = $conn->query($sql_shift_not_ok);
+$shift_not_ok = [];
+
+if ($res_shift_not_ok) {
+    while ($row = $res_shift_not_ok->fetch_assoc()) {
+        $shift_not_ok[$row["label"]] = intval($row["total"]);
+    }
+}
+
+/* Rework trend */
+$sql_rework_trend = "
+WITH weeks AS (
+    SELECT 1 AS week_number UNION ALL
+    SELECT 2 UNION ALL
+    SELECT 3 UNION ALL
+    SELECT 4
+),
+rework_data AS (
+    SELECT 
+        WEEK(created_date, 1) 
+          - WEEK(DATE_FORMAT(created_date, '%Y-%m-01'), 1) 
+          + 1 AS week_number,
+        COUNT(DISTINCT master_id) AS total
+    FROM rework_log
+    WHERE MONTH(created_date) = MONTH(CURDATE())
+      AND YEAR(created_date) = YEAR(CURDATE())
+    GROUP BY week_number
+)
+SELECT 
+    w.week_number,
+    COALESCE(r.total, 0) AS total
+FROM weeks w
+LEFT JOIN rework_data r ON r.week_number = w.week_number
+ORDER BY w.week_number
+";
+
+$res_rework_trend = $conn->query($sql_rework_trend);
+
+$rework_trend = [];
+
+if ($res_rework_trend) {
+    while ($row = $res_rework_trend->fetch_assoc()) {
+        $week = "week_" . intval($row["week_number"]);
+        $rework_trend[$week] = intval($row["total"]);
+    }
+}
 
 
 
@@ -379,20 +632,35 @@ echo json_encode([
                 "workplan"  => $C,
                 "assembled" => $D
             ]
-            ],
-            "alerts" => $alerts,
-            "ok_notok_trend" => $trend_output,
-            "this_month_quality" => [
-            "passed_without_fault" => $passed_without_fault,  // daily trend
+        ],
+
+        "alerts" => $alerts,
+
+        "ok_notok_trend" => $trend_output,
+
+        "this_month_quality" => [
+            "passed_without_fault" => $passed_without_fault,
             "rework"               => $rework_count,
             "drop"                 => $drop_count,
             "assembled_with_fault" => $fault_count
-],
+        ],
+
+        "stage_failure_analysis" => $stage_failure_analysis,
+
+        "team_performance" => [
+            "total"   => $tp_total,
+            "shift_1" => $tp_shift1,
+            "shift_2" => $tp_shift2
+        ],
+        "team_performance_shift" => [
+            "production" => $shift_production,
+            "ok"         => $shift_ok,
+            "not_ok"     => $shift_not_ok
+        ],
+        "rework_completion_trend" => $rework_trend,
 
 
-],
-            "stage_failure_analysis" => $stage_failure_analysis,
-
+    ]
 ]);
 
 $conn->close();

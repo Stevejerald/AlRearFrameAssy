@@ -1,5 +1,5 @@
 import AlLogo from '../assets/img/logo.png';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     BarChart,
     Bar,
@@ -28,85 +28,35 @@ import {
     Target,
     Activity,
     Package,
-    AlertTriangle,
-    Download,
-    Filter,
-    Settings
+    AlertTriangle
 } from "lucide-react";
 import "../assets/css/AssemblyHeadDashboard.css";
 import Header from "../components/Header.jsx";
 
 function AssemblyHeadDashboard() {
-    const [activeTab, setActiveTab] = useState('home');
+    const [loading, setLoading] = useState(true);
+    const [dashboard, setDashboard] = useState(null);
 
-    // Static data for demonstration
-    const stats = {
-        total_assemblies: 342,
-        ok_assemblies: 298,
-        not_ok_assemblies: 28,
-        rework_count: 16,
-    };
+    useEffect(() => {
+        fetch("http://localhost/AlRearFrameAssy/backend/api/getAssemblyHeadDashboard.php")
+            .then(res => res.json())
+            .then(data => {
+                setDashboard(data.data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("API Fetch Error:", err);
+                setLoading(false);
+            });
+    }, []);
 
-    const okNotOkData = [
-        { date: "Nov 15", ok: 45, not_ok: 5 },
-        { date: "Nov 16", ok: 52, not_ok: 3 },
-        { date: "Nov 17", ok: 48, not_ok: 7 },
-        { date: "Nov 18", ok: 55, not_ok: 4 },
-        { date: "Nov 19", ok: 50, not_ok: 6 },
-        { date: "Nov 20", ok: 48, not_ok: 3 },
-        { date: "Nov 21", ok: 42, not_ok: 5 }
-    ];
+    if (loading || !dashboard) {
+        return <p style={{ padding: "20px" }}>Loading dashboard...</p>;
+    }
 
-    const stageFailureData = [
-        { stage: "Stage 1", failures: 3 },
-        { stage: "Stage 2", failures: 8 },
-        { stage: "Stage 3", failures: 12 },
-        { stage: "Stage 4", failures: 5 },
-        { stage: "Stage 5", failures: 4 }
-    ];
-
-    const reworkTrendData = [
-        { date: "Week 1", reworks: 12 },
-        { date: "Week 2", reworks: 15 },
-        { date: "Week 3", reworks: 9 },
-        { date: "Week 4", reworks: 16 }
-    ];
-
-    const workplanData = [
-        { shift: "1st Shift", planned: 120, completed: 95, efficiency: 79 },
-        { shift: "2nd Shift", planned: 120, completed: 110, efficiency: 92 }
-    ];
-
-    const qualityMetrics = [
-        { name: "Passed", value: 450, color: "#10b981" },
-        { name: "Failed", value: 35, color: "#ef4444" },
-        { name: "Rework", value: 25, color: "#f59e0b" },
-        { name: "Pending", value: 15, color: "#6b7280" }
-    ];
-
-    const teamPerformance = [
-        { team: "Yesterday 1st Shift", productivity: 95, quality: 92, safety: 98 },
-        { team: "Yesterday 2nd Shift", productivity: 88, quality: 95, safety: 96 },
-        { team: "Today 1st Shift", productivity: 92, quality: 89, safety: 94 },
-        { team: "Today 2nd Shift", productivity: 85, quality: 91, safety: 97 }
-    ];
-
-    const recentAlerts = [
-        { id: 1, type: "warning", message: "Stage 3L failure", time: "10 mins ago" },
-        { id: 2, type: "info", message: "Stage 5R Failure", time: "25 mins ago" },
-        { id: 3, type: "urgent", message: "Stage 7INSP Failure", time: "2 hour ago" }
-    ];
-
-    const currentShift = {
-        shift: "Afternoon Shift",
-        startTime: "14:00",
-        endTime: "22:00",
-        supervisor: "John Smith",
-        activeWorkers: 24,
-        target: 120,
-        completed: 87
-    };
-
+    // -----------------------------
+    // CUSTOM TOOLTIP 
+    // -----------------------------
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
@@ -121,7 +71,7 @@ function AssemblyHeadDashboard() {
                         {label}
                     </p>
                     {payload.map((entry, index) => (
-                        <p key={index} style={{ fontSize: '14px', color: entry.color, margin: 0 }}>
+                        <p key={index} style={{ fontSize: '14px', color: entry.color || "#000", margin: 0 }}>
                             {entry.name}: <span style={{ fontWeight: 'bold' }}>{entry.value}</span>
                         </p>
                     ))}
@@ -131,7 +81,124 @@ function AssemblyHeadDashboard() {
         return null;
     };
 
-    const progressPercentage = ((currentShift.completed / currentShift.target) * 100).toFixed(1);
+    // -----------------------------
+    // 1. KPI STATS
+    // -----------------------------
+    const stats = {
+        total_assemblies: dashboard.team_performance?.total ?? 0,
+        ok_assemblies: dashboard.ok_assemblies ?? 0,
+        not_ok_assemblies: dashboard.not_ok ?? 0,
+        rework_count: dashboard.reworks_raised ?? 0,
+    };
+
+    // -----------------------------
+    // 2. OK vs NOT OK Trend
+    // -----------------------------
+    const okNotOkData = Object.entries(dashboard.ok_notok_trend || {}).map(([date, values]) => ({
+        date,
+        ok: values.ok_count,
+        not_ok: values.not_ok_count
+    }));
+
+    // -----------------------------
+    // 3. Stage Failure Analysis
+    // -----------------------------
+    const stageFailureData = (dashboard.stage_failure_analysis || []).map(item => ({
+        stage: item.stage_id,
+        failures: item.count
+    }));
+
+    // -----------------------------
+    // 4. Rework Trend (Weekly)
+    // -----------------------------
+    const reworkTrendData = Object.entries(dashboard.rework_completion_trend || {}).map(([week, total]) => ({
+        date: week.replace("_", " "),
+        reworks: total
+    }));
+
+    // -----------------------------
+    // 5. Workplan Summary
+    // -----------------------------
+    const workplanData = [
+        {
+            shift: "1st Shift",
+            planned: dashboard.workplan_summary.shift_1.workplan,
+            completed: dashboard.workplan_summary.shift_1.assembled
+        },
+        {
+            shift: "2nd Shift",
+            planned: dashboard.workplan_summary.shift_2.workplan,
+            completed: dashboard.workplan_summary.shift_2.assembled
+        }
+    ];
+
+    // -----------------------------
+    // 6. Quality Pie Chart
+    // -----------------------------
+    const qualityMetrics = [
+        { name: "Passed", value: dashboard.this_month_quality.passed_without_fault, color: "#10b981" },
+        { name: "Failed", value: dashboard.this_month_quality.assembled_with_fault, color: "#ef4444" },
+        { name: "Rework", value: dashboard.this_month_quality.rework, color: "#f59e0b" },
+        { name: "Dropped", value: dashboard.this_month_quality.drop, color: "#6b7280" }
+    ];
+
+    // -----------------------------
+    // 7. Team Performance (Graph)
+    // -----------------------------
+    const teamPerformance = [
+        {
+            team: "Yesterday Shift 1",
+            productivity: dashboard.team_performance_shift.production.yesterday_shift_1,
+            quality: dashboard.team_performance_shift.ok.yesterday_shift_1_ok,
+            safety: dashboard.team_performance_shift.not_ok.yesterday_shift_1
+        },
+        {
+            team: "Yesterday Shift 2",
+            productivity: dashboard.team_performance_shift.production.yesterday_shift_2,
+            quality: dashboard.team_performance_shift.ok.yesterday_shift_2_ok,
+            safety: dashboard.team_performance_shift.not_ok.yesterday_shift_2
+        },
+        {
+            team: "Today Shift 1",
+            productivity: dashboard.team_performance_shift.production.today_shift_1,
+            quality: dashboard.team_performance_shift.ok.today_shift_1_ok,
+            safety: dashboard.team_performance_shift.not_ok.today_shift_1
+        },
+        {
+            team: "Today Shift 2",
+            productivity: dashboard.team_performance_shift.production.today_shift_2,
+            quality: dashboard.team_performance_shift.ok.today_shift_2_ok,
+            safety: dashboard.team_performance_shift.not_ok.today_shift_2
+        }
+    ];
+
+    // -----------------------------
+    // 8. Alerts
+    // -----------------------------
+    const recentAlerts = (dashboard.alerts || []).map((msg, i) => ({
+        id: i,
+        type: "warning",
+        message: msg,
+        time: "Just now"
+    }));
+
+    // -----------------------------
+    // 9. Current Shift
+    // -----------------------------
+    const currentShift = {
+        shift: dashboard.current_shift === "A" ? "Shift 1" : "Shift 2",
+        startTime: dashboard.current_shift === "A" ? "06:00" : "14:00",
+        endTime: dashboard.current_shift === "A" ? "14:00" : "22:00",
+        supervisor: "Assembly Head",
+        activeWorkers: 12,
+        target: dashboard.workplan_count,
+        completed: dashboard.current_shift_made
+    };
+
+    const progressPercentage =
+        currentShift.target > 0
+            ? ((currentShift.completed / currentShift.target) * 100).toFixed(1)
+            : 0;
 
     return (
         <div className="dashboard-wrapper">
@@ -361,9 +428,9 @@ function AssemblyHeadDashboard() {
                                 <YAxis tick={{ fontSize: 12 }} />
                                 <Tooltip content={<CustomTooltip />} />
                                 <Legend />
-                                <Bar dataKey="productivity" name="Productivity" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="quality" name="Quality" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="safety" name="Safety" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="productivity" name="Planned" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="quality" name="Shift 1" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="safety" name="Shift 2" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

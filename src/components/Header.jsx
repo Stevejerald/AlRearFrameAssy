@@ -14,12 +14,26 @@ import AlLogo from '../assets/img/logo.png';
 function Header({ activeTab = 'home' }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const handleLogout = () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            // Add your logout logic here
-            window.location.href = '/login';
-        }
-    };
+    const handleLogout = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+    if (!confirmLogout) return;
+
+    try {
+        await fetch("http://localhost/AlRearFrameAssy/backend/api/logout.php", {
+            method: "POST",
+            credentials: "include"
+        });
+
+        // Clear local storage if used
+        localStorage.removeItem("token");
+
+        window.location.href = "/login";
+    } catch (err) {
+        console.error("Logout failed:", err);
+        alert("Error logging out. Try again.");
+    }
+};
+
 
     const navLinks = [
         {
