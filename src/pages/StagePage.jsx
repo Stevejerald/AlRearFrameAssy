@@ -24,6 +24,28 @@ function StagePage() {
         if (!isScannerStage) fetchAssemblyForStage();
     }, [stageId]);
 
+    useEffect(() => {
+        async function fetchEmp() {
+            try {
+                const res = await fetch(
+                    "http://localhost/AlRearFrameAssy/backend/api/getSessionEmpID.php",
+                    { credentials: "include" }  // IMPORTANT for PHP sessions
+                );
+
+                const data = await res.json();
+
+                if (data.status) {
+                    setEmpId(data.emp_id);   // Auto-fill Employee ID input
+                }
+            } catch (err) {
+                console.error("Session fetch failed:", err);
+            }
+        }
+
+        fetchEmp();
+    }, []);
+
+
     const fetchAssemblyForStage = async () => {
         const res = await fetch(
             `http://localhost/AlRearFrameAssy/backend/api/getPendingAssembly.php?stage_id=${stageId}`
@@ -233,7 +255,7 @@ function StagePage() {
             margin: '0 auto',
             padding: '2rem'
         },
-        
+
         // Header Styles
         header: {
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -301,15 +323,16 @@ function StagePage() {
             maxWidth: '300px',
             padding: '0.875rem 1.25rem',
             fontSize: '1rem',
-            border: '2px solid rgba(255, 255, 255, 0.3)',
+            border: '2px solid rgba(255, 255, 255, 0.5)',
             borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: 'rgba(255, 255, 255, 0.25)',
             backdropFilter: 'blur(10px)',
-            color: 'white',
-            fontWeight: '600',
+            color: '#ffffff',        // ← text is now clearly visible
+            fontWeight: '700',
             outline: 'none',
             transition: 'all 0.3s ease'
         },
+
         progressContainer: {
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -624,7 +647,7 @@ function StagePage() {
                         <div style={styles.stageIdBadge}>STAGE {stageId}</div>
                         <h1 style={styles.headerTitle}>Quality Control Certification</h1>
                         <p style={styles.headerSubtitle}>Assembly Line Quality Assurance</p>
-                        
+
                         <div style={styles.empIdContainer}>
                             <label style={styles.empIdLabel}>Employee ID:</label>
                             <input
@@ -684,8 +707,8 @@ function StagePage() {
                                     <button
                                         style={{
                                             ...styles.actionButton,
-                                            ...(selectedButtons[index] === "yes" 
-                                                ? styles.yesButtonActive 
+                                            ...(selectedButtons[index] === "yes"
+                                                ? styles.yesButtonActive
                                                 : styles.yesButton),
                                             ...(hoveredButton[`yes-${index}`] && selectedButtons[index] !== "yes" ? {
                                                 transform: 'translateY(-2px)',
@@ -694,8 +717,8 @@ function StagePage() {
                                         }}
                                         onClick={() => handleYesClick(index)}
                                         disabled={isDropped}
-                                        onMouseEnter={() => setHoveredButton({...hoveredButton, [`yes-${index}`]: true})}
-                                        onMouseLeave={() => setHoveredButton({...hoveredButton, [`yes-${index}`]: false})}
+                                        onMouseEnter={() => setHoveredButton({ ...hoveredButton, [`yes-${index}`]: true })}
+                                        onMouseLeave={() => setHoveredButton({ ...hoveredButton, [`yes-${index}`]: false })}
                                     >
                                         ✓ Yes
                                     </button>
@@ -703,8 +726,8 @@ function StagePage() {
                                     <button
                                         style={{
                                             ...styles.actionButton,
-                                            ...(selectedButtons[index] === "no" 
-                                                ? styles.noButtonActive 
+                                            ...(selectedButtons[index] === "no"
+                                                ? styles.noButtonActive
                                                 : styles.noButton),
                                             ...(hoveredButton[`no-${index}`] && selectedButtons[index] !== "no" ? {
                                                 transform: 'translateY(-2px)',
@@ -713,8 +736,8 @@ function StagePage() {
                                         }}
                                         onClick={() => handleNoClick(index)}
                                         disabled={isDropped}
-                                        onMouseEnter={() => setHoveredButton({...hoveredButton, [`no-${index}`]: true})}
-                                        onMouseLeave={() => setHoveredButton({...hoveredButton, [`no-${index}`]: false})}
+                                        onMouseEnter={() => setHoveredButton({ ...hoveredButton, [`no-${index}`]: true })}
+                                        onMouseLeave={() => setHoveredButton({ ...hoveredButton, [`no-${index}`]: false })}
                                     >
                                         ✕ No
                                     </button>

@@ -1,9 +1,13 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+session_start(); // start session
+
+header("Access-Control-Allow-Origin: http://localhost:5173"); 
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
-include "../config/db.php"; // connection
+
+include "../config/db.php";
 
 $empId = $_GET['emp_id'] ?? '';
 
@@ -25,8 +29,13 @@ if ($result->num_rows == 0) {
 
 $row = $result->fetch_assoc();
 
+// store session values
+$_SESSION["logged_in"] = true;
+$_SESSION["emp_id"]    = $empId;
+$_SESSION["stage"]     = $row['stage'];
+
 echo json_encode([
     "status" => true,
-    "stage" => $row['stage']
+    "stage"  => $row['stage'],
+    "emp_id" => $empId
 ]);
-?>
