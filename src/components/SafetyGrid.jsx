@@ -1,5 +1,5 @@
 import React from "react";
-import '../assets/css/safetygrid.css';
+import '../assets/css/safetyGrid.css';
 
 import Shoe from '../assets/img/shoe.png';
 import Glass from '../assets/img/glass.png';
