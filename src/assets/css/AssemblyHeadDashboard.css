@@ -1,0 +1,474 @@
+/* AssemblyHeadDashboard.css - Modern Blue & White Theme */
+
+/* Base Styles */
+.dashboard-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #eff6ff 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Header */
+.dashboard-header {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid #dbeafe;
+}
+
+.header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.header-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.logo-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: white;
+}
+
+.header-title-section h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.header-subtitle {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-action-btn {
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.header-action-btn:hover {
+    background-color: #eff6ff;
+}
+
+.header-action-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #4b5563;
+}
+
+/* Navigation */
+.nav-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-tab {
+    padding: 0.5rem 1.25rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-tab.active {
+    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.nav-tab:not(.active) {
+    background: transparent;
+    color: #4b5563;
+}
+
+.nav-tab:not(.active):hover {
+    background-color: #eff6ff;
+    color: #2563eb;
+}
+
+/* Main Content */
+.dashboard-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* Current Shift Banner */
+.shift-banner {
+    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.shift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.shift-item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: #bfdbfe;
+    font-size: 0.875rem;
+}
+
+.shift-item-header svg {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.shift-item-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.shift-item-subtitle {
+    font-size: 0.875rem;
+    color: #bfdbfe;
+    margin: 0;
+}
+
+.progress-bar-container {
+    width: 100%;
+    background-color: #1e40af;
+    border-radius: 9999px;
+    height: 0.5rem;
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    background-color: white;
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+}
+
+/* KPI Cards */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.kpi-card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-card-content {
+    padding: 1.5rem;
+}
+
+.kpi-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.kpi-icon {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.kpi-card:hover .kpi-icon {
+    transform: scale(1.1);
+}
+
+.kpi-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: white;
+}
+
+.kpi-icon.blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.kpi-icon.green {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.kpi-icon.red {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.kpi-icon.orange {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.kpi-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem 0;
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.kpi-footer {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.kpi-footer.gray {
+    color: #9ca3af;
+}
+
+.kpi-footer.green {
+    color: #059669;
+    font-weight: 500;
+}
+
+.kpi-footer.red {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.kpi-footer.orange {
+    color: #d97706;
+    font-weight: 500;
+}
+
+.kpi-card-border {
+    height: 4px;
+}
+
+.kpi-card-border.blue {
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.kpi-card-border.green {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.kpi-card-border.red {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.kpi-card-border.orange {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Charts Grid */
+.charts-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.charts-grid.two-col {
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+}
+
+.charts-grid.three-col {
+    grid-template-columns: 2fr 1fr;
+}
+
+@media (max-width: 1024px) {
+    .charts-grid.three-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Chart Card */
+.chart-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    padding: 1.5rem;
+    transition: box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-header svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #2563eb;
+    margin-right: 0.5rem;
+}
+
+.chart-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    flex: 1;
+}
+
+.chart-subtitle {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+/* Alerts Panel */
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alert-item {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+}
+
+.alert-item.urgent {
+    background-color: #fef2f2;
+    border-color: #ef4444;
+}
+
+.alert-item.warning {
+    background-color: #fefce8;
+    border-color: #eab308;
+}
+
+.alert-item.info {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+}
+
+.alert-message {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+    margin: 0 0 0.25rem 0;
+}
+
+.alert-time {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .nav-tabs {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .shift-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid.two-col,
+    .charts-grid.three-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Recharts Custom Styles */
+.recharts-wrapper {
+    margin: 0 auto;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+    stroke: #e5e7eb;
+}
+
+.recharts-text {
+    fill: #6b7280;
+    font-size: 12px;
+}
+
+.recharts-legend-wrapper {
+    margin-top: 1rem;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

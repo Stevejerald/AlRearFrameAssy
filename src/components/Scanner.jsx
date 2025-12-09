@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import '../assets/css/form.css';
 import SafetyGrid from "./SafetyGrid";
 import Logo from '../assets/img/logo.png';
-import QrScannerPopup from "../components/QrScannerPopup";
+import QrScannerPopup from "./QrScannerPopup";
 import { QRCodeCanvas } from "qrcode.react";
 
 function Scanner({ readOnly = false, masterData = null }) {

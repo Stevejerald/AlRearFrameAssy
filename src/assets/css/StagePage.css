@@ -1,380 +1,449 @@
-/* ========================================
-   STAGE PAGE STYLES
-   ======================================== */
+/* Modern Professional Stage Page Styles */
 
-/* Main Container */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .Main {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    padding: 20px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 50%, #e8eaf6 100%);
+    padding: 2rem 1rem;
+    position: relative;
 }
 
-/* Stage Form Container */
-.stage-form {
-    margin: 30px auto;
-    width: 95%;
-    max-width: 1200px;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 
-                0 8px 20px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.dropped-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255, 0, 0, 0.8);
-  color: white;
-  z-index: 999999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
-  font-weight: bold;
-  text-shadow: 3px 3px 5px black;
-}
-
+/* ========== DROPPED OVERLAY ========== */
 .dropped-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 0, 0, 0.85);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    font-size: 42px;
-    font-weight: bold;
-    color: white;
-    z-index: 9999;
-    text-align: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.3s ease;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+}
+
+.next-assy-btn {
+    margin-top: 3rem !important;
+    padding: 1.5rem 3rem !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 16px !important;
+    cursor: pointer !important;
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4) !important;
+    transition: all 0.3s ease !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .next-assy-btn:hover {
-    opacity: 0.9;
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(33, 150, 243, 0.6) !important;
 }
 
+.next-assy-btn::after {
+    content: '→';
+    font-size: 2rem;
+}
 
-/* Stage Table */
+/* ========== STAGE FORM CONTAINER ========== */
+.stage-form {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    animation: slideUp 0.5s ease;
+}
+
+/* ========== STAGE TABLE ========== */
 .stage-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 16px;
-    overflow: hidden;
-    border-radius: 8px;
 }
 
-/* Table Header */
 .stage-table thead {
-    background: linear-gradient(135deg, #013b6f 0%, #025a9c 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, #5e35b1, #3949ab);
+    color: white;
 }
 
 .stage-table thead tr th {
-    padding: 18px 20px;
-    font-size: 17px;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: 0.5px;
+    padding: 1.5rem;
+    text-align: left;
+    font-size: 0.875rem;
+    font-weight: 700;
     text-transform: uppercase;
-    border: none;
+    letter-spacing: 1.2px;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Table Body */
+.stage-table thead tr th:last-child {
+    text-align: center;
+}
+
 .stage-table tbody tr {
-    transition: all 0.2s ease;
-    background: #ffffff;
-}
-
-.stage-table tbody tr:nth-child(even) {
-    background: #f8f9fb;
+    border-bottom: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
 }
 
 .stage-table tbody tr:hover {
-    background: #e8f4fd;
-    transform: translateX(2px);
-    box-shadow: 0 2px 8px rgba(1, 59, 111, 0.1);
+    background: linear-gradient(90deg, #f8f9fa, #e3f2fd);
+    transform: scale(1.01);
 }
 
-.stage-table td {
-    padding: 16px 20px;
-    border: 1px solid #e5e7eb;
-    border-top: none;
-    color: #374151;
-    vertical-align: middle;
+.stage-table tbody tr:last-child {
+    border-bottom: none;
 }
 
-/* Serial Number Column */
-.stage-table td:first-child {
-    text-align: center;
-    font-weight: 600;
-    color: #013b6f;
-    font-size: 17px;
+.stage-table tbody td {
+    padding: 1.5rem;
+    font-size: 1rem;
+    color: #2c3e50;
 }
 
-/* Description Column (Tamil text) */
-.stage-table td:nth-child(2) {
+.stage-table tbody td:first-child {
+    font-weight: 700;
+    color: #5e35b1;
+    font-size: 1.125rem;
+    width: 100px;
+}
+
+.stage-table tbody td:nth-child(2) {
     font-weight: 500;
-    color: #1f2937;
     line-height: 1.6;
 }
 
-/* Action Column */
-.stage-table td:last-child {
+.stage-table tbody td:last-child {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
-/* Button Base Styles */
+/* ========== YES/NO BUTTONS ========== */
 .yes-btn,
 .no-btn {
-    padding: 10px 24px;
-    font-size: 15px;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
     border: 2px solid transparent;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    min-width: 80px;
-    opacity: 0.5;
     position: relative;
+    overflow: hidden;
 }
 
-.yes-btn:active,
-.no-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* YES Button - Unselected State */
 .yes-btn {
-    background: #e5e7eb;
-    color: #16a34a;
-    border-color: #d1d5db;
+    background: linear-gradient(135deg, #f1f8e9, #dcedc8);
+    color: #558b2f;
+    border-color: #c5e1a5;
 }
 
-.yes-btn:hover {
-    opacity: 0.7;
-    border-color: #16a34a;
+.yes-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #81c784, #66bb6a);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
 }
 
-/* YES Button - Selected State */
 .yes-btn.selected {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    color: #ffffff;
-    opacity: 1;
-    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3);
-    border-color: #16a34a;
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    border-color: #2e7d32;
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.5);
+    transform: scale(1.05);
 }
 
-.yes-btn.selected:hover {
-    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    transform: translateY(-1px);
-    opacity: 1;
-}
-
-.yes-btn.selected::after {
-    content: '✓';
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-}
-
-/* NO Button - Unselected State */
 .no-btn {
-    background: #e5e7eb;
-    color: #dc2626;
-    border-color: #d1d5db;
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    color: #c62828;
+    border-color: #ef9a9a;
 }
 
-.no-btn:hover {
-    opacity: 0.7;
-    border-color: #dc2626;
+.no-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ef5350, #e53935);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
 }
 
-/* NO Button - Selected State */
 .no-btn.selected {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: #ffffff;
-    opacity: 1;
-    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
-    border-color: #dc2626;
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    border-color: #c62828;
+    box-shadow: 0 8px 24px rgba(244, 67, 54, 0.5);
+    transform: scale(1.05);
 }
 
-.no-btn.selected:hover {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    transform: translateY(-1px);
-    opacity: 1;
+.yes-btn:disabled,
+.no-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
-.no-btn.selected::after {
-    content: '✓';
-    position: absolute;
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-}
-
-/* Audio Recorded Indicator */
-.stage-table td:last-child span {
-    color: #dc2626;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
+/* ========== AUDIO INDICATOR ========== */
+.stage-table td span[style*="color: red"] {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    animation: pulse 2s infinite;
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
-/* Empty State */
-.stage-table tbody tr td[colspan] {
-    text-align: center;
-    padding: 40px 20px;
-    color: #6b7280;
-    font-size: 16px;
-    font-style: italic;
+/* ========== SUBMIT CONTAINER ========== */
+.submit-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    padding: 1rem;
 }
 
-/* Smooth fade animation */
+.submit-btn,
+.drop-btn {
+    padding: 1.25rem 3rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+    color: white;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #1976D2, #1565C0);
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(33, 150, 243, 0.4);
+}
+
+.submit-btn::before {
+    content: '✓';
+    position: absolute;
+    left: 1.5rem;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover::before {
+    opacity: 1;
+    left: 1rem;
+}
+
+.drop-btn {
+    background: linear-gradient(135deg, #f44336, #d32f2f) !important;
+    color: white;
+}
+
+.drop-btn:hover {
+    background: linear-gradient(135deg, #d32f2f, #b71c1c) !important;
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(244, 67, 54, 0.4);
+}
+
+.drop-btn::before {
+    content: '⚠';
+    position: absolute;
+    left: 1.5rem;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.drop-btn:hover::before {
+    opacity: 1;
+    left: 1rem;
+}
+
+/* ========== ANIMATIONS ========== */
 @keyframes fadeIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(15px);
+    from {
+        opacity: 0;
     }
-    to { 
-        opacity: 1; 
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
         transform: translateY(0);
     }
 }
 
-.submit-container {
-    text-align: center;
-    margin-top: 25px;
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
 }
 
-.submit-btn {
-    background: #013b6f;
-    color: white;
-    font-size: 20px;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.submit-btn:hover {
-    background: #012b52;
-}
-
-
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-
-/* Tablet */
-@media (max-width: 992px) {
-    .stage-form {
-        padding: 25px;
-        width: 96%;
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 1024px) {
+    .stage-table thead tr th,
+    .stage-table tbody td {
+        padding: 1rem;
     }
     
-    .stage-table {
-        font-size: 15px;
-    }
-    
-    .stage-table thead tr th {
-        padding: 15px;
-        font-size: 16px;
-    }
-    
-    .stage-table td {
-        padding: 14px 16px;
+    .yes-btn,
+    .no-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+        min-width: 85px;
     }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
+    .Main {
+        padding: 1rem 0.5rem;
+    }
+    
     .stage-form {
-        padding: 20px 15px;
-        width: 98%;
-        margin: 20px auto;
-        border-radius: 8px;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
     }
     
     .stage-table {
-        font-size: 14px;
-        display: block;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        font-size: 0.875rem;
     }
     
     .stage-table thead tr th {
-        padding: 12px 10px;
-        font-size: 14px;
-        letter-spacing: 0.3px;
+        padding: 1rem 0.75rem;
+        font-size: 0.75rem;
     }
     
-    .stage-table td {
-        padding: 12px 10px;
+    .stage-table tbody td {
+        padding: 1rem 0.75rem;
     }
     
-    .stage-table td:last-child {
-        gap: 8px;
+    .stage-table tbody td:last-child {
+        flex-direction: column;
+        gap: 0.75rem;
     }
     
     .yes-btn,
     .no-btn {
-        padding: 8px 16px;
-        font-size: 13px;
-        min-width: 70px;
+        width: 100%;
+        max-width: 200px;
     }
     
-    .stage-table td:last-child span {
-        font-size: 12px;
+    .submit-container {
+        flex-direction: column;
+        padding: 1rem 0.5rem;
+    }
+    
+    .submit-btn,
+    .drop-btn {
+        width: 100%;
+        min-width: auto;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .dropped-overlay {
+        font-size: 2rem;
+        padding: 1.5rem;
+    }
+    
+    .next-assy-btn {
+        padding: 1rem 2rem !important;
+        font-size: 1.125rem !important;
     }
 }
 
-/* Small Mobile */
 @media (max-width: 480px) {
-    .stage-form {
-        padding: 15px 10px;
-        margin: 15px auto;
+    .stage-table thead tr th:first-child,
+    .stage-table tbody td:first-child {
+        width: 60px;
     }
     
     .stage-table thead tr th {
-        padding: 10px 8px;
-        font-size: 13px;
+        font-size: 0.7rem;
+        padding: 0.875rem 0.5rem;
     }
     
-    .stage-table td {
-        padding: 10px 8px;
-        font-size: 13px;
+    .stage-table tbody td {
+        padding: 0.875rem 0.5rem;
+        font-size: 0.875rem;
     }
     
     .yes-btn,
     .no-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-        min-width: 60px;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
     }
     
-    .stage-table td:first-child {
-        font-size: 14px;
+    .dropped-overlay {
+        font-size: 1.5rem;
+    }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+    .submit-container,
+    .drop-btn,
+    .dropped-overlay {
+        display: none;
+    }
+    
+    .Main {
+        background: white;
+    }
+    
+    .stage-form {
+        box-shadow: none;
+        border: 1px solid #ddd;
     }
 }
