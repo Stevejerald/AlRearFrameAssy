@@ -4,7 +4,7 @@ import ReworkHeader from "../components/ReworkHeader.jsx";
 import { useNavigate } from "react-router-dom";
 
 function ReworkTeamList() {
-    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedDate, setSelectedDate] = useState("2025-12-10"); // Default sample date
     const [reworks, setReworks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [audioData, setAudioData] = useState({});
@@ -12,59 +12,91 @@ function ReworkTeamList() {
 
     const navigate = useNavigate();
 
+    // -----------------------------
+    // STATIC SAMPLE DATA (NO BACKEND)
+    // -----------------------------
+    const sampleReworkList = [
+        {
+            master_id: 501,
+            axle_serial_no: "AXL-7001",
+            prod_date: "2025-12-09",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 1",
+            reason: "Noise detected",
+            rework_progress: "NOT_ACK",
+            has_audio: true
+        },
+        {
+            master_id: 502,
+            axle_serial_no: "AXL-7002",
+            prod_date: "2025-12-08",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 3",
+            reason: "Torque mismatch",
+            rework_progress: "PROCESSING",
+            has_audio: true
+        },
+        {
+            master_id: 503,
+            axle_serial_no: "AXL-7003",
+            prod_date: "2025-12-07",
+            drop_date: "2025-12-10",
+            stage_id: "Final QC",
+            reason: "Visual defect",
+            rework_progress: "COMPLETED",
+            has_audio: false
+        },
+        {
+            master_id: 504,
+            axle_serial_no: "AXL-7004",
+            prod_date: "2025-12-09",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 2",
+            reason: "Alignment issue",
+            rework_progress: "PROCESSING",
+            has_audio: true
+        }
+    ];
+
     useEffect(() => {
-        if (selectedDate !== "") fetchReworks();
-    }, [selectedDate]);
+        loadSampleData();
+    }, []);
 
-    const fetchReworks = async () => {
+    const loadSampleData = () => {
         setLoading(true);
-
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getReworkList.php?date=${selectedDate}`
-        );
-
-        const data = await res.json();
-        if (data.status && Array.isArray(data.data)) {
-            setReworks(data.data);
-        } else {
-            setReworks([]);
-        }
-
-        setAudioData({});
-        setLoading(false);
+        setTimeout(() => {
+            setReworks(sampleReworkList);
+            setLoading(false);
+        }, 500);
     };
 
-    const loadAudio = async (master_id) => {
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getAudio.php?master_id=${master_id}`
-        );
+    // -----------------------------
+    // STATIC SAMPLE AUDIO
+    // -----------------------------
+    const loadAudio = (master_id) => {
+        const sampleAudioURL =
+            "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav";
 
-        const data = await res.json();
-        if (data.status) {
-            setAudioData(prev => ({
-                ...prev,
-                [master_id]: data.audio
-            }));
-        }
+        setAudioData(prev => ({
+            ...prev,
+            [master_id]: sampleAudioURL
+        }));
     };
 
-    const acknowledge = async (master_id) => {
-        if (!window.confirm("Acknowledge this rework?")) return;
+    // -----------------------------
+    // STATIC ACKNOWLEDGE ACTION
+    // -----------------------------
+    const acknowledge = (master_id) => {
+        alert(`Rework ${master_id} acknowledged (sample action).`);
 
-        const res = await fetch(
-            "http://localhost/AlRearFrameAssy/backend/api/ackRework.php",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ master_id })
-            }
+        // Update status locally
+        setReworks(prev =>
+            prev.map(item =>
+                item.master_id === master_id
+                    ? { ...item, rework_progress: "PROCESSING" }
+                    : item
+            )
         );
-
-        const data = await res.json();
-        if (data.status) {
-            alert("Rework acknowledged!");
-            fetchReworks();
-        }
     };
 
     const openDetails = (master_id) => {
@@ -72,7 +104,7 @@ function ReworkTeamList() {
     };
 
     /*************************************************
-     * APPLY STATUS FILTER TO TABLE
+     * APPLY STATUS FILTER
      *************************************************/
     const filteredReworks = reworks.filter(row => {
         if (statusFilter === "ALL") return true;
@@ -92,30 +124,30 @@ function ReworkTeamList() {
                         padding: "1.5rem",
                         borderRadius: "12px",
                         marginBottom: "1.5rem",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
                     }}
                 >
-                    <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: "700" }}>
+                    <h1 style={{ fontSize: "1.75rem", fontWeight: "700" }}>
                         Rework Team – Work Overview
                     </h1>
-                    <p style={{ margin: 0, color: "#6b7280" }}>
+                    <p style={{ color: "#6b7280" }}>
                         View pending, processing, and completed reworks
                     </p>
                 </div>
 
-                {/* Filter Section */}
+                {/* Filters */}
                 <div
                     style={{
                         background: "white",
-                        borderRadius: "12px",
                         padding: "1.5rem",
+                        borderRadius: "12px",
                         marginBottom: "1.5rem",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
                     }}
                 >
                     <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
 
-                        {/* DATE FILTER */}
+                        {/* Date Filter */}
                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                             <Calendar size={20} color="#6b7280" />
                             <label style={{ fontWeight: 600 }}>Select Date:</label>
@@ -126,13 +158,13 @@ function ReworkTeamList() {
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
                             style={{
-                                padding: "0.625rem 1rem",
-                                borderRadius: "8px",
-                                border: "2px solid #e5e7eb"
+                                padding: "0.6rem 1rem",
+                                border: "2px solid #e5e7eb",
+                                borderRadius: "8px"
                             }}
                         />
 
-                        {/* STATUS FILTER */}
+                        {/* Status Filter */}
                         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                             <Filter size={20} color="#6b7280" />
                             <label style={{ fontWeight: 600 }}>Status:</label>
@@ -146,7 +178,6 @@ function ReworkTeamList() {
                                 borderRadius: "8px",
                                 border: "2px solid #e5e7eb",
                                 background: "white",
-                                fontSize: "1rem",
                                 cursor: "pointer"
                             }}
                         >
@@ -156,44 +187,43 @@ function ReworkTeamList() {
                             <option value="COMPLETED">Completed</option>
                         </select>
 
-                        {selectedDate && (
-                            <button
-                                onClick={fetchReworks}
-                                style={{
-                                    padding: "0.625rem 1rem",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "0.5rem",
-                                    background: "#10b981",
-                                    color: "white",
-                                    borderRadius: "8px",
-                                    fontWeight: "600"
-                                }}
-                            >
-                                <RefreshCw size={18} /> Refresh
-                            </button>
-                        )}
+                        <button
+                            onClick={loadSampleData}
+                            style={{
+                                padding: "0.6rem 1rem",
+                                background: "#10b981",
+                                color: "white",
+                                borderRadius: "8px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                                fontWeight: 600
+                            }}
+                        >
+                            <RefreshCw size={18} />
+                            Refresh
+                        </button>
                     </div>
                 </div>
 
-                {/* Table Section */}
+                {/* TABLE */}
                 <div
                     style={{
                         background: "white",
                         borderRadius: "12px",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                         overflow: "hidden",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
                     }}
                 >
                     {loading ? (
                         <div style={{ padding: "3rem", textAlign: "center" }}>
                             <RefreshCw size={32} style={{ animation: "spin 1s linear infinite" }} />
-                            <p>Loading...</p>
+                            <p>Loading data...</p>
                         </div>
                     ) : filteredReworks.length === 0 ? (
                         <div style={{ padding: "3rem", textAlign: "center" }}>
                             <AlertCircle size={48} color="#9ca3af" />
-                            <p>No matching rework records</p>
+                            <p>No matching reworks</p>
                         </div>
                     ) : (
                         <div style={{ overflowX: "auto" }}>
@@ -216,27 +246,22 @@ function ReworkTeamList() {
                                     {filteredReworks.map((row, index) => (
                                         <tr
                                             key={row.master_id}
-                                            style={{
-                                                borderBottom: "1px solid #e5e7eb",
-                                                transition: "0.2s"
-                                            }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.background = "#f9fafb")}
-                                            onMouseLeave={(e) => (e.currentTarget.style.background = "white")}
+                                            style={{ borderBottom: "1px solid #e5e7eb" }}
                                         >
                                             <td style={td}>{index + 1}</td>
-                                            <td style={{ ...td, fontWeight: 600 }}>{row.axle_serial_no}</td>
+                                            <td style={{ ...td, fontWeight: "600" }}>{row.axle_serial_no}</td>
                                             <td style={td}>{row.prod_date}</td>
                                             <td style={td}>{row.drop_date}</td>
                                             <td style={td}>{row.stage_id}</td>
-                                            <td style={td}>{row.reason || "-"}</td>
+                                            <td style={td}>{row.reason}</td>
 
-                                            {/* STATUS CHIP */}
+                                            {/* Status Chip */}
                                             <td style={td}>
                                                 <span
                                                     style={{
-                                                        padding: "0.4rem 0.75rem",
+                                                        padding: "0.4rem 0.8rem",
                                                         borderRadius: "6px",
-                                                        fontWeight: 600,
+                                                        fontWeight: "600",
                                                         background:
                                                             row.rework_progress === "COMPLETED"
                                                                 ? "#d1fae5"
@@ -248,7 +273,7 @@ function ReworkTeamList() {
                                                                 ? "#065f46"
                                                                 : row.rework_progress === "PROCESSING"
                                                                     ? "#92400e"
-                                                                    : "#991b1b",
+                                                                    : "#991b1b"
                                                     }}
                                                 >
                                                     {row.rework_progress.replace("_", " ")}
@@ -259,10 +284,10 @@ function ReworkTeamList() {
                                             <td style={td}>
                                                 {row.has_audio ? (
                                                     audioData[row.master_id] ? (
-                                                        <audio controls src={audioData[row.master_id]} style={{ width: "180px" }} />
+                                                        <audio controls src={audioData[row.master_id]} style={{ width: "160px" }} />
                                                     ) : (
-                                                        <button onClick={() => loadAudio(row.master_id)} style={audioBtn}>
-                                                            <Volume2 size={16} /> Load
+                                                        <button style={audioBtn} onClick={() => loadAudio(row.master_id)}>
+                                                            <Volume2 size={16} /> Play
                                                         </button>
                                                     )
                                                 ) : (
@@ -270,12 +295,10 @@ function ReworkTeamList() {
                                                 )}
                                             </td>
 
-                                            {/* ACTIONS */}
+                                            {/* ACTION BUTTONS */}
                                             <td style={td}>
-                                                {/* ACKNOWLEDGE BUTTON */}
                                                 {row.rework_progress === "NOT_ACK" && (
                                                     <button
-                                                        onClick={() => acknowledge(row.master_id)}
                                                         style={{
                                                             padding: "0.5rem 1rem",
                                                             background: "#f59e0b",
@@ -284,14 +307,13 @@ function ReworkTeamList() {
                                                             marginBottom: "0.5rem",
                                                             display: "block"
                                                         }}
+                                                        onClick={() => acknowledge(row.master_id)}
                                                     >
                                                         Acknowledge
                                                     </button>
                                                 )}
 
-                                                {/* START / VIEW REWORK */}
                                                 <button
-                                                    onClick={() => openDetails(row.master_id)}
                                                     style={{
                                                         padding: "0.5rem 1rem",
                                                         background: "#3b82f6",
@@ -301,6 +323,7 @@ function ReworkTeamList() {
                                                         alignItems: "center",
                                                         gap: "0.5rem"
                                                     }}
+                                                    onClick={() => openDetails(row.master_id)}
                                                 >
                                                     <Eye size={16} />
                                                     {row.rework_progress === "COMPLETED" ? "View" : "Start"}
@@ -328,11 +351,9 @@ function ReworkTeamList() {
 const th = {
     padding: "1rem",
     textAlign: "left",
-    fontSize: "0.875rem",
     fontWeight: "700",
-    color: "#6b7280",
     textTransform: "uppercase",
-    letterSpacing: "0.05em"
+    color: "#6b7280"
 };
 
 const td = {
@@ -342,15 +363,15 @@ const td = {
 };
 
 const audioBtn = {
-    padding: "0.4rem 0.75rem",
+    padding: "0.4rem 0.8rem",
     background: "#eff6ff",
     border: "1px solid #bfdbfe",
     borderRadius: "6px",
-    color: "#1e40af",
     cursor: "pointer",
+    color: "#1e40af",
     display: "flex",
     alignItems: "center",
-    gap: "0.5rem"
+    gap: "0.4rem"
 };
 
 export default ReworkTeamList;
