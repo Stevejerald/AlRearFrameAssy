@@ -15,111 +15,109 @@ function ReworkTeamDetails() {
     const [showAudioPopup, setShowAudioPopup] = useState(false);
     const [activeTask, setActiveTask] = useState(null);
 
+    // -----------------------------------------
+    // STATIC MASTER SAMPLE DATA
+    // -----------------------------------------
+    const sampleMaster = {
+        master_id,
+        axle_serial_no: "AXL-7002",
+        prod_date: "2025-12-09",
+        prod_shift: "Shift 1"
+    };
+
+    // -----------------------------------------
+    // STATIC TASK SAMPLE DATA
+    // -----------------------------------------
+    const sampleTasks = [
+        {
+            stage_id: "1",
+            task_no: "2",
+            description: "Noise detected inside assembly unit",
+            audio: "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav"
+        },
+        {
+            stage_id: "3",
+            task_no: "1",
+            description: "Torque mismatch detected in calibration",
+            audio: null
+        },
+        {
+            stage_id: "4",
+            task_no: "3",
+            description: "Alignment deviation beyond tolerance",
+            audio: null
+        }
+    ];
+
     useEffect(() => {
-        fetchDetails();
+        loadSampleDetails();
     }, []);
 
-    const fetchDetails = async () => {
+    // -----------------------------------------
+    // LOAD STATIC SAMPLE DATA
+    // -----------------------------------------
+    const loadSampleDetails = () => {
         setLoading(true);
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getReworkDetails.php?master_id=${master_id}`
-        );
-        const data = await res.json();
-
-        if (data.status) {
-            setMaster(data.master);
-            setTasks(data.failed_tasks);
-        }
-
-        setLoading(false);
+        setTimeout(() => {
+            setMaster(sampleMaster);
+            setTasks(sampleTasks);
+            setLoading(false);
+        }, 400);
     };
 
-    /************************************************
-     * UPDATE YES immediately in database
-     ************************************************/
-    const handleYes = async (stage_id, task_no) => {
-        const payload = {
-            master_id,
-            stage_id,
-            task_no,
-            status: "yes",
-            audio: null
-        };
+    // -----------------------------------------
+    // YES BUTTON → remove task from the list
+    // -----------------------------------------
+    const handleYes = (stage_id, task_no) => {
+        alert(`Task ${task_no} at stage ${stage_id} marked FIXED (sample).`);
 
-        await fetch(
-            "http://localhost/AlRearFrameAssy/backend/api/updateReworkTask.php",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            }
+        // Remove the task from the list
+        setTasks(prev =>
+            prev.filter(t => !(t.stage_id === stage_id && t.task_no === task_no))
         );
-
-        fetchDetails(); // Reload updated remaining failed tasks
     };
 
-    /************************************************
-     * When NO → open audio popup
-     ************************************************/
+    // -----------------------------------------
+    // NO BUTTON → open popup
+    // -----------------------------------------
     const handleNo = (stage_id, task_no) => {
         setActiveTask({ stage_id, task_no });
         setShowAudioPopup(true);
     };
 
-    /************************************************
-     * Save NO with audio inside DB
-     ************************************************/
+    // -----------------------------------------
+    // SAVE AUDIO FOR NO (sample only)
+    // -----------------------------------------
     const saveReworkAudio = async (audioBlob) => {
         const reader = new FileReader();
-        reader.onloadend = async () => {
+        reader.onloadend = () => {
 
-            const payload = {
-                master_id,
-                stage_id: activeTask.stage_id,
-                task_no: activeTask.task_no,
-                status: "no",
-                audio: reader.result
-            };
+            alert(`Audio saved for Stage ${activeTask.stage_id}, Task ${activeTask.task_no} (sample).`);
 
-            await fetch(
-                "http://localhost/AlRearFrameAssy/backend/api/updateReworkTask.php",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }
+            // Update task to include audio
+            setTasks(prev =>
+                prev.map(t =>
+                    t.stage_id === activeTask.stage_id && t.task_no === activeTask.task_no
+                        ? { ...t, audio: reader.result }
+                        : t
+                )
             );
 
             setShowAudioPopup(false);
             setActiveTask(null);
-            fetchDetails();
         };
 
         reader.readAsDataURL(audioBlob);
     };
 
-    /************************************************
-     * Complete Entire Rework
-     ************************************************/
-    const completeRework = async () => {
-        const confirm = window.confirm("Confirm rework completion?");
-        if (!confirm) return;
+    // -----------------------------------------
+    // COMPLETE ENTIRE REWORK (static)
+    // -----------------------------------------
+    const completeRework = () => {
+        if (!window.confirm("Confirm rework completion?")) return;
 
-        const res = await fetch(
-            "http://localhost/AlRearFrameAssy/backend/api/completeRework.php",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ master_id })
-            }
-        );
-
-        const data = await res.json();
-
-        if (data.status) {
-            alert("Rework Completed Successfully!");
-            navigate("/rework-team");
-        }
+        alert("Rework Completed Successfully! (sample)");
+        navigate("/reworkteam");
     };
 
     const reworkCompleted = tasks.length === 0;
@@ -137,6 +135,7 @@ function ReworkTeamDetails() {
 
             <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "2rem" }}>
 
+                {/* BACK BUTTON */}
                 <button
                     onClick={() => navigate(-1)}
                     style={{
@@ -154,6 +153,7 @@ function ReworkTeamDetails() {
                     <ArrowLeftCircle size={22} /> Back
                 </button>
 
+                {/* HEADER CARD */}
                 <div
                     style={{
                         background: "white",
@@ -175,6 +175,7 @@ function ReworkTeamDetails() {
                     )}
                 </div>
 
+                {/* TASKS LIST */}
                 <div
                     style={{
                         background: "white",
@@ -219,6 +220,7 @@ function ReworkTeamDetails() {
                                     />
                                 )}
 
+                                {/* YES / NO Buttons */}
                                 <div style={{ display: "flex", gap: "1rem" }}>
                                     <button
                                         onClick={() => handleYes(t.stage_id, t.task_no)}
@@ -255,6 +257,7 @@ function ReworkTeamDetails() {
                     )}
                 </div>
 
+                {/* COMPLETE BUTTON */}
                 {reworkCompleted && (
                     <div style={{ textAlign: "center", marginTop: "2rem" }}>
                         <button
