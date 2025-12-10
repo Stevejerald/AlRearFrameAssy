@@ -8,81 +8,90 @@ function AssemblyHeadSummary() {
     const [rowAudio, setRowAudio] = useState({});
     const [loading, setLoading] = useState(false);
 
+    // ------------------------------------------
+    // STATIC SAMPLE TABLE DATA (NO API REQUIRED)
+    // ------------------------------------------
+    const sampleData = [
+        {
+            master_id: 101,
+            axle_serial_no: "AXL-2025-001",
+            date: "2025-01-15",
+            status: "OK",
+            rework_status: "CLEAR",
+            audio: true
+        },
+        {
+            master_id: 102,
+            axle_serial_no: "AXL-2025-002",
+            date: "2025-01-15",
+            status: "NOT OK",
+            rework_status: "PENDING",
+            audio: true
+        },
+        {
+            master_id: 103,
+            axle_serial_no: "AXL-2025-003",
+            date: "2025-01-15",
+            status: "OK",
+            rework_status: "CLEAR",
+            audio: false
+        },
+        {
+            master_id: 104,
+            axle_serial_no: "AXL-2025-004",
+            date: "2025-01-15",
+            status: "NOT OK",
+            rework_status: "PENDING",
+            audio: true
+        }
+    ];
+
+    // When date is selected → Load static sample data
     useEffect(() => {
-        if (selectedDate !== "") fetchSummary();
+        if (selectedDate !== "") {
+            setLoading(true);
+            setTimeout(() => {
+                setSummary(sampleData); // << static data
+                setLoading(false);
+            }, 600);
+        }
     }, [selectedDate]);
 
-    const fetchSummary = async () => {
-        setLoading(true);
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getSummary.php?date=${selectedDate}`
-        );
-
-        const data = await res.json();
-
-        if (data.status && Array.isArray(data.data)) {
-            setSummary(data.data);
-            setRowAudio({});
-        } else {
-            setSummary([]);
-            setRowAudio({});
-        }
-        setLoading(false);
-    };
-
+    // ------------------------------------------
+    // STATIC SAMPLE AUDIO RESPONSE
+    // ------------------------------------------
     const loadAudio = async (master_id) => {
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getAudio.php?master_id=${master_id}`
-        );
-        const data = await res.json();
+        // Fake sample audio URL
+        const sampleAudioURL = "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav";
 
-        if (data.status) {
-            setRowAudio(prev => ({
-                ...prev,
-                [master_id]: data.audio
-            }));
-        } else {
-            alert("No audio found");
-        }
+        setRowAudio(prev => ({
+            ...prev,
+            [master_id]: sampleAudioURL
+        }));
     };
 
+    // ------------------------------------------
+    // STATIC REWORK FUNCTION (no backend)
+    // ------------------------------------------
     const sendToRework = async (master_id) => {
         if (!window.confirm("Send this assembly to REWORK?")) return;
 
-        const res = await fetch(
-            "http://localhost/AlRearFrameAssy/backend/api/markRework.php",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ master_id })
-            }
-        );
-
-        const data = await res.json();
-        if (data.status) {
-            alert("Marked for Rework!");
-            fetchSummary();
-        }
+        alert(`Assembly ${master_id} marked for rework (sample action).`);
     };
 
     const exportData = () => {
-        // Add export functionality here
-        alert("Export functionality coming soon!");
+        alert("Sample Export Coming Soon!");
     };
 
     return (
         <div style={{
             minHeight: '100vh',
-            background: '#f5f5f5',
-            fontFamily: 'system-ui, -apple-system, sans-serif'
+            background: '#f5f5f5'
         }}>
             <Header activeTab="summary" />
 
-            <div style={{
-                maxWidth: '1600px',
-                margin: '0 auto',
-                padding: '2rem 1rem'
-            }}>
+            <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '2rem 1rem' }}>
+
                 {/* Page Header */}
                 <div style={{
                     background: 'white',
@@ -103,15 +112,11 @@ function AssemblyHeadSummary() {
                                 fontSize: '1.75rem',
                                 fontWeight: '700',
                                 color: '#1f2937',
-                                margin: '0 0 0.25rem 0'
+                                margin: 0
                             }}>
                                 Assembly Summary
                             </h1>
-                            <p style={{
-                                color: '#6b7280',
-                                margin: 0,
-                                fontSize: '0.95rem'
-                            }}>
+                            <p style={{ color: '#6b7280', margin: 0 }}>
                                 View and manage assembly records
                             </p>
                         </div>
@@ -125,15 +130,9 @@ function AssemblyHeadSummary() {
                                 padding: '0.75rem 1.5rem',
                                 background: '#3b82f6',
                                 color: 'white',
-                                border: 'none',
                                 borderRadius: '8px',
-                                fontSize: '0.95rem',
-                                fontWeight: '600',
-                                cursor: 'pointer',
-                                transition: 'background 0.2s'
+                                fontWeight: '600'
                             }}
-                            onMouseEnter={(e) => e.target.style.background = '#2563eb'}
-                            onMouseLeave={(e) => e.target.style.background = '#3b82f6'}
                         >
                             <Download size={18} />
                             Export
@@ -146,109 +145,49 @@ function AssemblyHeadSummary() {
                     background: 'white',
                     borderRadius: '12px',
                     padding: '1.5rem',
-                    marginBottom: '1.5rem',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                    marginBottom: '1.5rem'
                 }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem',
-                        flexWrap: 'wrap'
-                    }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <Calendar size={20} color="#6b7280" />
-                        <label style={{
-                            fontSize: '1rem',
-                            fontWeight: '600',
-                            color: '#374151'
-                        }}>
-                            Select Date:
-                        </label>
+                        <label style={{ fontWeight: '600' }}>Select Date:</label>
+
                         <input
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
                             style={{
                                 padding: '0.625rem 1rem',
-                                border: '2px solid #e5e7eb',
                                 borderRadius: '8px',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                transition: 'border-color 0.2s',
-                                flex: '1 1 auto',
+                                border: '2px solid #e5e7eb',
                                 maxWidth: '250px'
                             }}
-                            onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
-                            onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                         />
-                        {selectedDate && (
-                            <button
-                                onClick={fetchSummary}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    padding: '0.625rem 1rem',
-                                    background: '#10b981',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '0.95rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    transition: 'background 0.2s'
-                                }}
-                                onMouseEnter={(e) => e.target.style.background = '#059669'}
-                                onMouseLeave={(e) => e.target.style.background = '#10b981'}
-                            >
-                                <RefreshCw size={16} />
-                                Refresh
-                            </button>
-                        )}
                     </div>
                 </div>
 
-                {/* Table Section */}
+                {/* TABLE SECTION */}
                 <div style={{
                     background: 'white',
                     borderRadius: '12px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                     overflow: 'hidden'
                 }}>
                     {loading ? (
-                        <div style={{
-                            padding: '3rem',
-                            textAlign: 'center',
-                            color: '#6b7280'
-                        }}>
-                            <RefreshCw size={32} style={{ animation: 'spin 1s linear infinite' }} />
-                            <p style={{ marginTop: '1rem' }}>Loading...</p>
+                        <div style={{ padding: '3rem', textAlign: 'center' }}>
+                            <RefreshCw size={32} style={{ animation: "spin 1s linear infinite" }} />
+                            <p>Loading...</p>
                         </div>
                     ) : summary.length === 0 ? (
-                        <div style={{
-                            padding: '3rem',
-                            textAlign: 'center'
-                        }}>
+                        <div style={{ padding: '3rem', textAlign: 'center' }}>
                             <AlertCircle size={48} color="#9ca3af" />
-                            <p style={{
-                                marginTop: '1rem',
-                                fontSize: '1.125rem',
-                                fontWeight: '600',
-                                color: '#6b7280'
-                            }}>
-                                {selectedDate ? 'No records found for selected date' : 'Please select a date to view records'}
+                            <p style={{ marginTop: '1rem', fontWeight: '600', color: '#6b7280' }}>
+                                {selectedDate ? "No sample data found." : "Select a date to view sample data"}
                             </p>
                         </div>
                     ) : (
                         <div style={{ overflowX: 'auto' }}>
-                            <table style={{
-                                width: '100%',
-                                borderCollapse: 'collapse'
-                            }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
-                                    <tr style={{
-                                        background: '#f9fafb',
-                                        borderBottom: '2px solid #e5e7eb'
-                                    }}>
+                                    <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
                                         <th style={tableHeaderStyle}>SL No</th>
                                         <th style={tableHeaderStyle}>Axle Serial No</th>
                                         <th style={tableHeaderStyle}>Date</th>
@@ -261,127 +200,67 @@ function AssemblyHeadSummary() {
 
                                 <tbody>
                                     {summary.map((row, index) => {
-                                        const isOK = row.status.includes("OK");
+                                        const isOK = row.status === "OK";
 
                                         return (
-                                            <tr
-                                                key={index}
-                                                style={{
-                                                    borderBottom: '1px solid #e5e7eb',
-                                                    transition: 'background 0.2s'
-                                                }}
-                                                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
-                                                onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
-                                            >
+                                            <tr key={index} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                                 <td style={tableCellStyle}>{index + 1}</td>
-                                                <td style={{...tableCellStyle, fontWeight: '600', color: '#1f2937'}}>
+
+                                                <td style={{ ...tableCellStyle, fontWeight: '600' }}>
                                                     {row.axle_serial_no}
                                                 </td>
+
                                                 <td style={tableCellStyle}>{row.date}</td>
 
+                                                {/* STATUS */}
                                                 <td style={tableCellStyle}>
                                                     <span style={{
                                                         padding: '0.375rem 0.875rem',
                                                         borderRadius: '6px',
-                                                        fontSize: '0.875rem',
-                                                        fontWeight: '600',
                                                         background: isOK ? '#d1fae5' : '#fee2e2',
                                                         color: isOK ? '#065f46' : '#991b1b',
-                                                        display: 'inline-block'
+                                                        fontWeight: '600'
                                                     }}>
                                                         {row.status}
                                                     </span>
                                                 </td>
 
+                                                {/* REWORK STATUS */}
                                                 <td style={tableCellStyle}>
-                                                    {row.rework_status === "CLEAR" ? (
-                                                        <span style={{
-                                                            padding: '0.375rem 0.875rem',
-                                                            borderRadius: '6px',
-                                                            fontSize: '0.875rem',
-                                                            fontWeight: '600',
-                                                            background: '#dbeafe',
-                                                            color: '#1e40af',
-                                                            display: 'inline-block'
-                                                        }}>
-                                                            CLEAR
-                                                        </span>
-                                                    ) : (
-                                                        <span style={{
-                                                            padding: '0.375rem 0.875rem',
-                                                            borderRadius: '6px',
-                                                            fontSize: '0.875rem',
-                                                            fontWeight: '600',
-                                                            background: '#fef3c7',
-                                                            color: '#92400e',
-                                                            display: 'inline-block'
-                                                        }}>
-                                                            PENDING
-                                                        </span>
-                                                    )}
+                                                    <span style={{
+                                                        padding: '0.375rem 0.875rem',
+                                                        borderRadius: '6px',
+                                                        background: row.rework_status === "CLEAR" ? '#dbeafe' : '#fef3c7',
+                                                        color: row.rework_status === "CLEAR" ? '#1e40af' : '#92400e',
+                                                        fontWeight: '600'
+                                                    }}>
+                                                        {row.rework_status}
+                                                    </span>
                                                 </td>
 
+                                                {/* AUDIO */}
                                                 <td style={tableCellStyle}>
                                                     {row.audio ? (
                                                         rowAudio[row.master_id] ? (
-                                                            <audio
-                                                                controls
-                                                                src={rowAudio[row.master_id]}
-                                                                style={{
-                                                                    width: '200px',
-                                                                    height: '35px'
-                                                                }}
-                                                            />
+                                                            <audio controls src={rowAudio[row.master_id]} style={{ width: '180px' }} />
                                                         ) : (
                                                             <button
                                                                 onClick={() => loadAudio(row.master_id)}
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    gap: '0.5rem',
-                                                                    padding: '0.5rem 1rem',
-                                                                    background: '#eff6ff',
-                                                                    border: '1px solid #bfdbfe',
-                                                                    borderRadius: '6px',
-                                                                    color: '#1e40af',
-                                                                    fontSize: '0.875rem',
-                                                                    fontWeight: '600',
-                                                                    cursor: 'pointer',
-                                                                    transition: 'all 0.2s'
-                                                                }}
-                                                                onMouseEnter={(e) => {
-                                                                    e.target.style.background = '#dbeafe';
-                                                                }}
-                                                                onMouseLeave={(e) => {
-                                                                    e.target.style.background = '#eff6ff';
-                                                                }}
+                                                                style={audioBtnStyle}
                                                             >
-                                                                <Volume2 size={16} />
-                                                                View Audio
+                                                                <Volume2 size={16} /> Play Audio
                                                             </button>
                                                         )
                                                     ) : (
-                                                        <span style={{ color: '#9ca3af' }}>-</span>
+                                                        <span style={{ color: '#9ca3af' }}>No Audio</span>
                                                     )}
                                                 </td>
 
+                                                {/* SEND TO REWORK */}
                                                 <td style={tableCellStyle}>
                                                     <button
                                                         onClick={() => sendToRework(row.master_id)}
-                                                        style={{
-                                                            padding: '0.5rem 1rem',
-                                                            background: '#f59e0b',
-                                                            border: 'none',
-                                                            borderRadius: '6px',
-                                                            color: 'white',
-                                                            fontSize: '0.875rem',
-                                                            fontWeight: '600',
-                                                            cursor: 'pointer',
-                                                            transition: 'background 0.2s',
-                                                            whiteSpace: 'nowrap'
-                                                        }}
-                                                        onMouseEnter={(e) => e.target.style.background = '#d97706'}
-                                                        onMouseLeave={(e) => e.target.style.background = '#f59e0b'}
+                                                        style={reworkBtnStyle}
                                                     >
                                                         Send to Rework
                                                     </button>
@@ -401,35 +280,49 @@ function AssemblyHeadSummary() {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
-
-                @media (max-width: 768px) {
-                    table {
-                        font-size: 0.875rem;
-                    }
-                    
-                    audio {
-                        width: 150px !important;
-                    }
-                }
             `}</style>
         </div>
     );
 }
 
+// ----------------------
+// Styles
+// ----------------------
 const tableHeaderStyle = {
-    padding: '1rem',
-    textAlign: 'left',
-    fontSize: '0.875rem',
-    fontWeight: '700',
-    color: '#6b7280',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
+    padding: "1rem",
+    fontWeight: "700",
+    fontSize: "0.8rem",
+    textTransform: "uppercase",
+    color: "#6b7280",
+    letterSpacing: "0.05em"
 };
 
 const tableCellStyle = {
-    padding: '1rem',
-    fontSize: '0.95rem',
-    color: '#374151'
+    padding: "1rem",
+    fontSize: "0.95rem",
+    color: "#374151"
+};
+
+const audioBtnStyle = {
+    padding: "0.5rem 0.75rem",
+    background: "#eff6ff",
+    border: "1px solid #bfdbfe",
+    borderRadius: "6px",
+    color: "#1e40af",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.4rem",
+    fontWeight: "600",
+    cursor: "pointer"
+};
+
+const reworkBtnStyle = {
+    padding: "0.5rem 1rem",
+    background: "#f59e0b",
+    borderRadius: "6px",
+    color: "white",
+    fontWeight: "600",
+    cursor: "pointer"
 };
 
 export default AssemblyHeadSummary;
