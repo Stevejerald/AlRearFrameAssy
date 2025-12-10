@@ -3,46 +3,77 @@ import { Calendar, RefreshCw, Volume2, AlertCircle } from "lucide-react";
 import Header from "../components/Header.jsx";
 
 function AssemblyHeadRework() {
-    const [selectedDate, setSelectedDate] = useState("");
+    // DEFAULT FIXED DATE: 2025-12-10 (YYYY-MM-DD)
+    const [selectedDate, setSelectedDate] = useState("2025-12-10");
+
     const [reworks, setReworks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [audioData, setAudioData] = useState({});
 
-    useEffect(() => {
-        if (selectedDate !== "") fetchReworkList();
-    }, [selectedDate]);
+    // ------------------------------------------
+    // STATIC SAMPLE DATA (NO API CALLS)
+    // ------------------------------------------
+    const sampleReworkList = [
+        {
+            master_id: 201,
+            axle_serial_no: "AXL-9001",
+            prod_date: "2025-12-09",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 3",
+            rework_progress: "PENDING",
+            reason: "Noise detected during rotation",
+            has_audio: true
+        },
+        {
+            master_id: 202,
+            axle_serial_no: "AXL-9002",
+            prod_date: "2025-12-09",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 2",
+            rework_progress: "PROCESSING",
+            reason: "Torque mismatch",
+            has_audio: true
+        },
+        {
+            master_id: 203,
+            axle_serial_no: "AXL-9003",
+            prod_date: "2025-12-09",
+            drop_date: "2025-12-10",
+            stage_id: "Stage 1",
+            rework_progress: "COMPLETED",
+            reason: "Alignment correction",
+            has_audio: false
+        }
+    ];
 
+    useEffect(() => {
+        fetchReworkList();
+    }, []);
+
+    // ------------------------------------------
+    // Replace backend with sample data
+    // ------------------------------------------
     const fetchReworkList = async () => {
         setLoading(true);
 
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getReworkList.php?date=${selectedDate}`
-        );
-
-        const data = await res.json();
-
-        if (data.status && Array.isArray(data.data)) {
-            setReworks(data.data);
-        } else {
-            setReworks([]);
-        }
-
-        setAudioData({});
-        setLoading(false);
+        // Fake a delay for loading effect
+        setTimeout(() => {
+            setReworks(sampleReworkList);
+            setLoading(false);
+        }, 600);
     };
 
+    // ------------------------------------------
+    // STATIC SAMPLE AUDIO
+    // ------------------------------------------
     const loadAudio = async (master_id) => {
-        const res = await fetch(
-            `http://localhost/AlRearFrameAssy/backend/api/getAudio.php?master_id=${master_id}`
-        );
+        const sampleAudioURL =
+            "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav";
 
-        const data = await res.json();
-        if (data.status) {
-            setAudioData(prev => ({
-                ...prev,
-                [master_id]: data.audio
-            }));
-        }
+        setAudioData(prev => ({
+            ...prev,
+            [master_id]: sampleAudioURL
+        }));
     };
 
     return (
@@ -95,36 +126,36 @@ function AssemblyHeadRework() {
                         <input
                             type="date"
                             value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedDate(e.target.value);
+                                fetchReworkList();
+                            }}
                             style={{
                                 padding: "0.625rem 1rem",
                                 border: "2px solid #e5e7eb",
                                 borderRadius: "8px",
                                 fontSize: "1rem",
-                                outline: "none",
                                 maxWidth: "250px",
                             }}
                         />
 
-                        {selectedDate && (
-                            <button
-                                onClick={fetchReworkList}
-                                style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "0.5rem",
-                                    padding: "0.625rem 1rem",
-                                    background: "#10b981",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "8px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <RefreshCw size={18} />
-                                Refresh
-                            </button>
-                        )}
+                        <button
+                            onClick={fetchReworkList}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                                padding: "0.625rem 1rem",
+                                background: "#10b981",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            <RefreshCw size={18} />
+                            Refresh
+                        </button>
                     </div>
                 </div>
 
@@ -156,9 +187,7 @@ function AssemblyHeadRework() {
                                     fontWeight: "600",
                                 }}
                             >
-                                {selectedDate
-                                    ? "No rework records found for selected date"
-                                    : "Select a date to view reworks"}
+                                No rework records for {selectedDate}
                             </p>
                         </div>
                     ) : (
@@ -193,16 +222,12 @@ function AssemblyHeadRework() {
                                             }
                                         >
                                             <td style={td}>{index + 1}</td>
-
-                                            <td style={{ ...td, fontWeight: "600" }}>
-                                                {row.axle_serial_no}
-                                            </td>
-
+                                            <td style={{ ...td, fontWeight: "600" }}>{row.axle_serial_no}</td>
                                             <td style={td}>{row.prod_date}</td>
                                             <td style={td}>{row.drop_date}</td>
-
                                             <td style={td}>{row.stage_id}</td>
 
+                                            {/* STATUS */}
                                             <td style={td}>
                                                 <span
                                                     style={{
@@ -214,22 +239,23 @@ function AssemblyHeadRework() {
                                                             row.rework_progress === "COMPLETED"
                                                                 ? "#d1fae5"
                                                                 : row.rework_progress === "PROCESSING"
-                                                                ? "#fef3c7"
-                                                                : "#fee2e2",
+                                                                    ? "#fef3c7"
+                                                                    : "#fee2e2",
                                                         color:
                                                             row.rework_progress === "COMPLETED"
                                                                 ? "#065f46"
                                                                 : row.rework_progress === "PROCESSING"
-                                                                ? "#92400e"
-                                                                : "#991b1b",
+                                                                    ? "#92400e"
+                                                                    : "#991b1b",
                                                     }}
                                                 >
-                                                    {row.rework_progress.replace("_", " ")}
+                                                    {row.rework_progress}
                                                 </span>
                                             </td>
 
-                                            <td style={td}>{row.reason ?? "-"}</td>
+                                            <td style={td}>{row.reason || "-"}</td>
 
+                                            {/* AUDIO */}
                                             <td style={td}>
                                                 {row.has_audio ? (
                                                     audioData[row.master_id] ? (
@@ -243,7 +269,7 @@ function AssemblyHeadRework() {
                                                             onClick={() => loadAudio(row.master_id)}
                                                             style={audioBtn}
                                                         >
-                                                            <Volume2 size={16} /> View Audio
+                                                            <Volume2 size={16} /> Play Audio
                                                         </button>
                                                     )
                                                 ) : (
@@ -276,7 +302,6 @@ const th = {
     fontWeight: "700",
     color: "#6b7280",
     textTransform: "uppercase",
-    letterSpacing: "0.05em",
 };
 
 const td = {
@@ -290,7 +315,6 @@ const audioBtn = {
     background: "#eff6ff",
     border: "1px solid #bfdbfe",
     borderRadius: "6px",
-    fontSize: "0.875rem",
     color: "#1e40af",
     cursor: "pointer",
     display: "flex",
