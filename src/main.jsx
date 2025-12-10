@@ -15,112 +15,29 @@ import ReworkTeamList from './pages/ReworkTeamList.jsx';
 import ReworkTeamDetails from './pages/ReworkTeamDetails.jsx';
 
 import Login from './pages/Login.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
 
-      {/* Public routes */}
+      {/* PUBLIC ROUTES */}
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<EmpLogin />} />
       <Route path="/stage/:stageId" element={<StagePage />} />
 
-      {/* -----------------------
-          ASSEMBLY HEAD PROTECTED ROUTES
-         ----------------------- */}
-      <Route
-        path="/AssemblyHead"
-        element={
-          <ProtectedRoute allowedRoles={["assemblyHead"]}>
-            <AssemblyHeadDashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* ASSEMBLY HEAD ROUTES */}
+      <Route path="/AssemblyHead" element={<AssemblyHeadDashboard />} />
+      <Route path="/AssemblyHead/Home" element={<AssemblyHeadDashboard />} />
+      <Route path="/AssemblyHead/Summary" element={<AssemblyHeadSummary />} />
+      <Route path="/AssemblyHead/Workplan" element={<Workplan />} />
+      <Route path="/AssemblyHead/Rework" element={<AssemblyHeadRework />} />
 
-      <Route
-        path="/AssemblyHead/Home"
-        element={
-          <ProtectedRoute allowedRoles={["assemblyHead"]}>
-            <AssemblyHeadDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/AssemblyHead/Summary"
-        element={
-          <ProtectedRoute allowedRoles={["assemblyHead"]}>
-            <AssemblyHeadSummary />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/AssemblyHead/Workplan"
-        element={
-          <ProtectedRoute allowedRoles={["assemblyHead"]}>
-            <Workplan />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/AssemblyHead/Rework"
-        element={
-          <ProtectedRoute allowedRoles={["assemblyHead"]}>
-            <AssemblyHeadRework />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* -----------------------
-          REWORK TEAM PROTECTED ROUTES
-         ----------------------- */}
-      <Route
-        path="/ReworkTeam"
-        element={
-          <ProtectedRoute allowedRoles={["reworkTeam"]}>
-            <ReworkTeamDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/ReworkTeam/Home"
-        element={
-          <ProtectedRoute allowedRoles={["reworkTeam"]}>
-            <ReworkTeamDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/ReworkTeam/List"
-        element={
-          <ProtectedRoute allowedRoles={["reworkTeam"]}>
-            <ReworkTeamList />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/rework-team/List"
-        element={
-          <ProtectedRoute allowedRoles={["reworkTeam"]}>
-            <ReworkTeamList />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/rework-details/:master_id"
-        element={
-          <ProtectedRoute allowedRoles={["reworkTeam"]}>
-            <ReworkTeamDetails />
-          </ProtectedRoute>
-        }
-      />
+      {/* REWORK TEAM ROUTES */}
+      <Route path="/ReworkTeam" element={<ReworkTeamDashboard />} />
+      <Route path="/ReworkTeam/Home" element={<ReworkTeamDashboard />} />
+      <Route path="/ReworkTeam/List" element={<ReworkTeamList />} />
+      <Route path="/rework-team/List" element={<ReworkTeamList />} />
+      <Route path="/rework-details/:master_id" element={<ReworkTeamDetails />} />
 
     </Routes>
   </BrowserRouter>
