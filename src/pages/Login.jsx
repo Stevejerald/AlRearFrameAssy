@@ -7,7 +7,25 @@ function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = async (e) => {
+    // -----------------------------------
+    // STATIC LOGIN CREDENTIALS (OFFLINE)
+    // -----------------------------------
+    const STATIC_USERS = [
+        {
+            email: "assemble@al.in",
+            password: "123456",
+            role: "assemblyHead",
+            redirect: "/AssemblyHead/"
+        },
+        {
+            email: "rework@al.in",
+            password: "123456",
+            role: "reworkTeam",
+            redirect: "/ReworkTeam/"
+        }
+    ];
+
+    const handleLogin = (e) => {
         e.preventDefault();
         setError("");
 
@@ -18,39 +36,23 @@ function Login() {
 
         setLoading(true);
 
-        try {
-            const response = await fetch(
-                "http://localhost/AlRearFrameAssy/backend/api/adminLogin.php",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",   // 🔥 REQUIRED FOR PHP SESSION
-                    body: JSON.stringify({ email, password }),
-                }
+        setTimeout(() => {
+            // Check credentials against static users
+            const user = STATIC_USERS.find(
+                (u) => u.email === email && u.password === password
             );
 
-            const data = await response.json();
-
-            if (data.status === true) {
-                const role = data.user.role;
-
-                // 🔥 ROLE-BASED REDIRECT
-                if (role === "assemblyHead") {
-                    window.location.href = "/AssemblyHead/";
-                } else if (role === "reworkTeam") {
-                    window.location.href = "/ReworkTeam/";
-                } else {
-                    setError("User role not recognized.");
-                }
-            } else {
-                setError(data.message || "Invalid credentials");
+            if (!user) {
+                setError("Invalid credentials");
+                setLoading(false);
+                return;
             }
-        } catch (err) {
-            console.error("Login error:", err);
-            setError("Server error. Try again later.");
-        }
 
-        setLoading(false);
+            // Redirect based on role
+            window.location.href = user.redirect;
+
+            setLoading(false);
+        }, 600); // fake loading delay
     };
 
     return (
